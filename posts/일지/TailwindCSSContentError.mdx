@@ -1,0 +1,95 @@
+---
+title: Tailwind CSS content 문제
+description: Tailwind CSS에서 발생한 content 관련 문제
+tags:
+  - tailwindCSS
+  - 일지
+createdAt: 2024-09-01
+thumbnail: /thumbnails/tailwindCSS.png
+---
+Tailwind CSS를 이용하여 개발을 하던 중 어떤 버그를 만났다. 이를 해결하는 과정에서 있었던 일을 기술하고자 한다.
+## 상황
+Next.js + TailwindCSS 기반으로 개발을 하던 상황이었다.
+여러가지 함수를 모아 놓은 globalFunc 에서 tailwindCSS 의 class 에 대응하는 string 값을 반환할 수 있게 참조할 객체를 작성해둔 상황이었다.
+
+```typescript
+export const RankPainter = {
+  textColor: {
+    1: "text-blue",
+    2: "text-green",
+    3: "text-yellow",
+    4: "text-red",
+  },
+  bgColor: {
+    1: "bg-blue",
+    2: "bg-green",
+    3: "bg-yellow",
+    4: "bg-red",
+  },
+  borderColor: {
+    1: "border-blue",
+    2: "border-green",
+    3: "border-yellow",
+    4: "border-red",
+  },
+} as const;
+```
+위와같은 객체였는데, 입력된 rank 값에 따라 색을 칠하기 위한 목적의 객체였다.
+<br/>
+기본적으로 Tailwind CSS에서는 동적으로 클래스를 할당할 때, 주의할 점이 있기 때문에 이런 방식을 사용한 것이었다. 이는 Tailwind CSS의 동작 방식과 관련이 있다.
+<br/>
+Tailwind CSS에서 클래스 이름을 추출할 떄는 **끊어지지 않은 완전 문자열**로 존재하는 클래스만 찾게된다. 예를 들어 살펴보면
+
+``` typescript
+<div class="text-`{{ err ? 'red' : 'green' }}-600`"></div>
+```
+
+위와 같이 class명을 할당하게 되면 Tailwind는 이를 인식하지 못한다. (설령 원하는 대로 클래스 이름이 할당된다고 하더라도!) 그대신 아래와 같은 방법을 사용할 것을 권한다.
+
+```typescript
+<div class="{{ error ? 'text-red-600' : 'text-green-600' }}"></div>
+```
+
+
+때문에 나는 상단에 적어둔 것과 같은 함수를 만든 것이다. 물론 해당하는 객체에서의 값들을 여러가지 컴포넌트에 적용 시킬 필요가 있는 것도 있었다. 그래서 이런 객체를 통해 컴포넌트에 원하는 클래스 명을 주입시키고자 했다. 하지만 여기서 문제가 발생했다.
+<br/>
+바로 해당 객체로 주입된 클래스가 작동을 하지 않는 것이었다. 하지만 이 버그를 찾는 것이 힘든일이 었는데 그 이유는 아래와 같다.
+
+## 일부는 색이 칠해지고 일부는 안된다?
+
+![](public/images/Pasted%20image%2020240906232317.png)
+위 사진은 객체를 참조하여 색을 칠한 상황이다. 1등과 4등만 각각 제대로 칠해진 상태인데, 이것 때문에 제대로 된 원인을 찾는데 시간이 걸렸다. 어째서 같은 로직을 사용해서 색을 칠했는데 일부만 칠해지는 것인가? 
+<br/>
+이는 Tailwind CSS의 CSS 생성 방식과 관련이 있는 문제였다. 
+<br/>
+기본적으로 Tailwind는 **화면에서 사용한다고 인식되는** class의 css를 렌더한다. Tailwind는 빌드시 클래스가 사용되는 가를 판단하는데 이 때문에 위에서 언급한 첫번째 유형같은 `text-${color}-600`과 같은 형식이 불가능한 것이다. 
+<br/>
+그리고 아래 사진을 보자.
+
+![](public/images/Pasted%20image%2020240906234036.png)
+이는 같은 페이지 내부에 있는 다른 컴포넌트인데, 이곳에서는 `text-red`와 같은 코드가 **명시적으로** 선언되었다. 즉, 이미 tailwind는 `text-red`에 대한 정보를 가지고 있던 것이다!
+<br/>
+앞서 말하였듯이, Tailwind는 화면에서 사용한다고 인식하는 class의 css를 렌더한다. 이 판단은 빌드때 이루어지는데, 심지어 이는 **주석으로 써있어도 인식하고 있었다.** 때문에 이런 저런 수정을 해보아도 도무지 원인을 찾기가 힘들었던 것이다. 
+
+## 결국 본인의 문제
+
+원인은 찾았지만, 결국 색이 정상적으로 입혀지지 않는 것은 명확했다. 일부분이 입혀지는 원인을 찾았을 뿐이다. 그렇다면 왜 색이 입혀지지 않은 것일까? 사실 이 또한 원인을 찾을 필요없이 이미 앞서 언급한 부분에서 찾을 수 있는 문제였다.
+<br/>
+Tailnwind에는 `tailwind.config.ts`라는 파일이 존재한다. 이름을 보면 알 수 있겠지만, tailwind의 여러가지 설정을 만질 수 있는 파일이다. 이런저런 속성이 있지만, 이 글에서 관련된 내용은 `content`속성이다. 
+
+```typescript
+content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/containers/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+```
+당시의 내 config의 상태이다. pages, components 등 여러 경로가 적혀있는데, 이는 tailwind가 css 파일을 생성하기 위해 필요한 파일에 대한 경로이다. 하지만 새로 만든 최상단의 파일은 이곳에 없었기 때문에 tailwind가 사전에 해당 클래스에 대한 정보를 읽을 수 없었고, **화면에서 사용한다고 인식**하지 못한 것이다. 그리고 화면 내부에 쓰이던 다른 컴포넌트에서 사용된 색에 대한 정보는 tailwind가 인식하였기 때문에 해당하는 색들은 정상적으로 적용이 된 것이다. 
+<br/>
+때문에 앞서 선언한 객체의 경로를 위 content에 추가함으로써 해결하였다. 
+## 결론 
+일부분만 색이 정상적으로 칠해졌기에 더욱 찾기 힘들었던 버그였다. 아주 기본적인 부분에서 놓친것도 있고, tailwind가 주석마저도 인식하여 처리를 해둘 것 이라고는 생각하지 못했기에 더더욱 시간이 걸렸다.
+<br/>
+사실 공식 문서를 차분히 읽어보면 충분히 추론할 수 있는 문제였지만 역시 빠르게 넘겨 읽었던 부분이 문제가 됐다. 
+<br/>

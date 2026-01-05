@@ -1,0 +1,83 @@
+---
+title: Next Route Handler
+description: Next 에서 제공하는 Route Handler에 대해 알아본다
+tags:
+  - next
+createdAt: 2025-10-29
+thumbnail: /thumbnails/next.jpg
+draft: false
+---
+## 서론
+
+Next는 자체적으로 API Routing 시스템을 제공한다. pages 기반에서는 API Routes 라는 이름으로 제공되었지만, 본문에서는 app router를 기반으로 설명하고자 한다. app router 기반에서도 API Routes 와 동일하게 기능할 수 있는 Route Handler 라는 기능을 제공한다. 우리는 이를 사용해서 특정 경로를 통해 웹 `response`와 `request` API를 커스터마이징 할 수 있다. 이 글에서는 Route Handler에 대해 간단히 알아보고자 한다.
+
+
+## 본론
+
+### route
+
+기본적으로 마치 `page`파일을 제작하듯이, `app`하위 폴더 안에서 `route`파일을 작성하는 것으로 간단하게 만들 수 있다. 다만, `page`파일이 존재하는 곳에는 만들어서는 안된다.
+
+`route` 파일은 다음과 같이 정의될 수 있다.
+
+```typescript
+// route.ts
+export async function GET(request : Request){...}
+```
+
+`route`파일은 `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS` 와 같은 **HTTP 메소드**를 커스터마이징 할 수 있게 해준다.
+
+이 떄 정의된 메소드에는 다음과 같은 parameters가 올 수 있다.
+
+#### Request (Optional)
+request는 [웹 Request API](https://developer.mozilla.org/ko/docs/Web/API/Request)의 확장된 객체인 `NextRequest` 객체이다. `NextRequest`에 대한 설명은 하단에 참고 자료를 참조하길 바란다.
+
+#### Context(Optional)
+`params`를 유일한 값으로 가지는 객체로, 동적 라우트 매개변수를 가지는 객체이다. 
+
+| 예시                               | URL            | `params`                  |
+| -------------------------------- | -------------- | ------------------------- |
+| `app/dashboard/[team]/route.js`  | `/dashboard/1` | `{ team: '1' }`           |
+| `app/shop/[tag]/[item]/route.js` | `/shop/1/2`    | `{ tag: '1', item: '2' }` |
+| `app/blog/[...slug]/route.js`    | `/blog/1/2`    | `{ slug: ['1', '2'] }`    |
+
+### Response
+`response`도 마찬가지로 Next의 확장된 `NextResponse`가 존재한다. Route Handler는 `NextResponse`를 return하여 response를 작성하거나 확장된 기능을 쉽게 이용할 수 있다.
+
+```typescript
+// route.ts
+...
+	try{
+		return NextResponse.json(res.data);
+	}catch (err) {
+	    return NextResponse.json(
+	      {
+	        error: `failed to search users : ${err}`,
+	      },
+	      {
+	        status: 500,
+	      }
+	    );
+	}
+...
+```
+
+### 기타
+
+이 외에도 `캐싱`, [`next.revalidate`](https://nextjs-ko.org/docs/app/building-your-application/data-fetching/caching-and-revalidating#revalidating-data)를 이용한 캐싱 데이터 재검증, next에서 제공하는 [`cookies`](https://nextjs-ko.org/docs/app/api-reference/functions/cookies) 및 [`headers`](https://nextjs-ko.org/docs/app/api-reference/functions/headers), `redirect` 같은 동적함수 사용은 물론 Open Ai 와 같은 대형 LLM 사용을 위한 `streaming`기능도 가지고 있다.
+
+## 결론
+
+Route Handler를 사용함으로써 서버와 클라이언트가 동일한 타입 정의를 공유할 수 있고, 별도의 서버 설정 없이 간단하게 api 컨트롤을 할 수 있다. 또한 Route Handler는 서버에서만 실행되기 때문에 클라이언트의 용량을 늘리지 않고, 민감한 로직을 클라이언트에 노출시키지 않는 장점이 있다.  
+
+이 글에서 소개하는 내용이 전부가 아니라, 내용이 굉장히 방대하고, 여러가지 옵션들이 존재해 상세한 내용은 공식 문서를 확인하는 것이 좋을 것 같다. 
+
+## 참고 자료
+
+[Next.js - Route Handler](https://nextjs-ko.org/docs/app/building-your-application/routing/route-handlers#webhooks)
+각종 하위 자료 :
+- [NextResponse](https://nextjs-ko.org/docs/app/api-reference/functions/next-response)
+- [NextRequest](https://nextjs-ko.org/docs/app/api-reference/functions/next-request)
+- [Route](https://nextjs.org/docs/app/api-reference/file-conventions/route)
+[Next.js 14 강좌 8편, 라우트 핸들러에서 URL 쿼리 파라미터와 redirect, Headers, Cookies 그리고 캐싱 방식 알아보기](https://mycodingshub.github.io/blog/2024-05-12-nextjs-14-tutorial-route-handler-and-url-query-parameter-redirect-headers-cookies-caching/)
+[# Next.js에서 라우트 핸들러 활용하기](https://reactnext-central.xyz/blog/nextjs/route-handlers)

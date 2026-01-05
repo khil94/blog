@@ -1,0 +1,303 @@
+---
+title: 빠르게 살펴보는 Zustand 핵심 개념
+description: zustand의 핵심 개념과 사용법을 빠르게 훑어본다
+tags:
+  - zustnad
+createdAt: 2025-10-24
+thumbnail: /thumbnails/zustand.png
+draft: false
+---
+## 서론
+
+어디까지나 빠르게 zustand의 개념을 훑기 위해 정리한 글이다. 따라서 기본적으로 react 생태계에서 사용되는 store의 개념에 대해 이해하고 있다는 것을 전제로 한다. 
+
+또한 본 글에서는 상세한 개념이나 깊은 사용법 등에 대해 알아보지 않는 것을 유념하면 좋겠다.
+
+## Store
+
+다른 전역 상태 관리 라이브러리에서와 마찬가지로, `zustand` 에서의 `store` 도 어플리케이션의 여러 상태를 중앙에서 관리하는 패턴을 의미한다.
+
+`zustand`의 특징은 `Hooks` 기반으로 작동하는 react 친화적인 라이브러리라는 것으로, 비교적 보일러플레이트 코드의 양도 적고 사용하기 간편하다.
+
+## Create
+
+store를 생성하는 create함수 하나로 State와 Action을 통합해서 정의하는 것이 가능하다.
+
+create함수의 콜백은 set, get의 매개변수를 가지고, 이를 통해서 상태를 변경하고 조회할 수 있다. 아래와 같은 식으로 사용하면 된다. 혹은 set 함수 내부에서 콜백을 사용할 수도 있다.
+```javascript
+import { create } from 'zustand' 
+
+export const use이름Store = create((set, get) => {
+	return {
+		상태: 초깃값, 
+		액션: () => { 
+			const state = get() 
+			const { 상태 } = state 
+			set({ 상태: 상태 + 1 }) 
+			} 
+			set(state=>({ 상태 : state.상태 + 1 }))
+		} 
+	})
+```
+
+## 주의점
+
+store에서 상태나 액션을 구독할 때 주의해야 한다. 한번에 구독하게 될 경우, 실제로 사용하지 않는 state가 변하더라도 다시 컴포넌트가 렌더링 되기 때문에 기본적으로 나눠서 가져오는 것을 원칙으로 한다.
+
+```jsx
+import { use이름Store } from '~/store/스토어' 
+export default function 컴포넌트() { 
+	const 상태 = use이름Store(state => state.상태) 
+	const 액션 = use이름Store(state => state.액션) 
+	const 스토어 = use이름Store(); // 하지 말 것.
+	return ( 
+		<> 
+			<h2>{상태}</h2> 
+			<button onClick={액션}>+</button> 
+		</> 
+	) 
+}
+```
+
+## 액션 분리
+
+만일 스토어에 액션이 많아지면, 코드가 지저분해지고, 사용하는 컴포넌트에서도 사용이 불편해진다. 그럴 때 store 내부에 actions 객체 안에서 모든 액션을 관리하는 것으로 이를 해소할 수 있다.
+
+```javascript
+import { create } from 'zustand' 
+
+export const use이름Store = create((set, get) => {
+	return {
+		상태: 초깃값, 
+		actions: {
+			action1 : ()=> ...,
+			action2 : ()=> ...,
+		}
+	})
+```
+
+## 상태 삭제
+
+set 함수의 두 번째 인수의 값을 true 로 전달하면, 상태를 병합하지 않고 덮어쓰게 된다.
+
+```javascript
+import { create } from 'zustand'
+import { omit } from 'lodash-es'
+
+interface State {
+  count: number
+  double: number
+  min: number
+  max: number
+}
+
+interface Actions {
+  actions: {
+    increase: () => void
+    decrease: () => void
+    deleteState: (keys: Array<keyof State>) => void
+  }
+}
+
+
+const initialState: State = {
+  count: 1,
+  double: 2,
+  min: 0,
+  max: 99
+}
+
+export const useCountStore = create<State & Actions>(set => ({
+  ...initialState,
+  actions: {
+    increase: () => set(state => ({ count: state.count + 1 })),
+    decrease: () => set(state => ({ count: state.count - 1 })),
+    deleteState: keys => {
+      set(state => omit(state, keys), true) // 상태가 병합된다.
+    }
+  }
+}))
+
+
+```
+
+## 미들웨어
+
+zustand에는 많은 미들웨어가 존재하는데, 이를 통해서 스토어의 기능을 확장할 수 있다.
+또, 미들웨어 들을 여러 개 같이 쓸 수 있는데, 이때 정해진 순서에 맞게 사용하는 것을 유념하자.
+
+### combine
+
+typescript 환경에서 상태를 직접 작성하지 않고, combine을 통해 추론하도록 할 수 있다.
+`combine(state, actions)`로 작성하는데, 첫 번째 인자는 추론할 상태를, 두 번째 인자는 set, get을 포함하는 액션 함수를 받게 된다.
+
+### 액션 호출 속 액션
+
+액션 함수 내부에서 다른 액션을 호출할 때, get을 통해서 호출할 수 있다.
+하지만 combine 미들웨어를 사용하면, get 함수가 액션 타입을 추론하지 못하게 된다.
+
+이 때는 actions 함수 내부에 function으로 액션 함수를 별도 함수로 작성한다. 호이스팅 되는 원리에 따라, 내부에서 액션을 호출할 수 있게 된다.
+
+```javascript
+const initialState = {
+	count : 1,
+	double: 2,
+}
+
+export const useTestStore = create(
+	combine(initialState, (set,get)=>({
+		actions: {
+			increase: ()=>{
+				set(state => ({ count : state.count + 1}));
+				get().actions.increaseDouble(); // error
+			},
+			increaseDouble: ()=>{
+				set(state => ({ double: state.count * 2}));
+			},
+		}
+	}))
+);
+
+```
+
+```javascript
+const initialState = {
+	count : 1,
+	double: 2,
+}
+
+export const useTestStore = create(
+	combine(initialState, set=>{
+		actions: {
+			function increase (){
+				set(state => ({ count : state.count + 1}));
+				increaseDouble(); // good
+			},
+			function increaseDouble (){
+				set(state => ({ double: state.count * 2}));
+			},
+		}
+	})
+);
+
+```
+
+### Immer - 중첩된 객체 변경
+
+다음과 같이 중첩된 객체를 상태로 쓴다고 생각해보자.
+```typescript
+interface State{
+	user:{
+		email: string;
+		name: string;
+		age: number;
+	} | null
+}
+```
+
+이 객체의 user.name만 변경하는 것은 물론 가능하다. 하지만 객체의 깊이가 깊어질 수록, 변경 작업이 복잡해진다.
+```javascript
+	...
+	setName: val =>{
+		set(state =>{
+			if(state.user){
+				return {
+					...state.user,
+					name: val
+				}
+			}
+			return {};
+		})
+	}
+```
+
+zustand의 미들웨어 immer를 사용하면 이런 문제를 해결할 수 있다.
+
+```javascript
+
+export const useUserStore = create(
+	immer<State & Actions>(set=>({
+		...initialState,
+		actions: {
+			// ...
+			setName: val =>{
+				set(state =>{
+					if(state.user){
+						state.user.name = name;
+					}
+				})
+			}
+			})
+		}
+			
+	)
+	...
+	
+);
+```
+
+### subscribeWithSelector - 상태 구독
+
+스토어 훅에서 subscribe 미들웨어를 사용하면, 스토어의 **모든** 상태 변경을 구독할 수 있다. 또 subscribe의 반환을 호출함으로써 구독을 해제할 수 있다.
+```typescript
+const listener = (newState, prevState)=>{};
+const unsubscribe = useTestStore.subscribe(listener);
+unsubscribe(); // 구독 해제
+```
+
+특정 상태만 구독하고 싶다면 subscribeWithSelector 를 사용하면 된다. subscribeWithSelector를 사용한 store에 사용된 subscribe 함수는 selector를 추가 인자로 받을 수 있게 된다. 
+
+```typescript
+const selector = state => state.... // 구독할 상태를 정의한다.
+const listener = (newState, prevState)=>{};
+const unsubscribe = useTestStore.subscribe(selector,listener);
+unsubscribe(); // 구독 해제
+```
+
+다음은 subscribeWithSelector를 사용해 count에 반응해 double을 제어하는 예제이다.
+```javascript
+const initialState = {
+	count : 1,
+	double: 2,
+}
+
+export const useTestStore = create(
+	subscribeWithSelector(
+		combine(initialState, set=>{
+			actions: {
+				increase: ()=>{
+					set(state => ({ count : state.count + 1}));
+
+				},
+				decrease: ()=>{
+					set(state => ({ count: state.count - 2}));
+				},
+			}
+		})
+	)
+);
+
+useTestStore.subscribe(
+	state=>state.count,
+	count => {
+		useTestStore.setState(()=>({double: count*2}));
+	}
+)
+
+```
+
+구독을 특정 컴포넌트에서만 사용하는 경우, 위 훅을 사용하는 컴포넌트에서 useEffect를 통해 구독을 시작하고, 구독을 해제할 수도 있다.
+
+### Persist - 스토리지 사용
+
+persist 미들웨어를 사용해 로컬 스토리지에 상태를 저장하고 불러올 수 있다. 이를 통해서 새로고침을 하더라도 상태를 유지할 수 있고, 재 방문 시에도 상태를 유지할 수 있다.
+
+이때, name 옵션을 필수로 작성해야 하는데, storage에 저장될 값의 key를 지정하는 역할을 한다.
+
+주의할 점은, JSON 형식으로 변환할 수 없는 상태는 저장할 수 없다는 점이다. 이를테면, 이전에 정의한 actions 객체는 함수들만 가지므로, 단순 빈 객체로 저장되어 액션을 사용할 수 없게 된다.
+
+
+## 참조
+
+- [zustand](https://zustand.docs.pmnd.rs/getting-started/introduction)
+- [zustand 핵심 정리](https://www.heropy.dev/p/n74Tgc)

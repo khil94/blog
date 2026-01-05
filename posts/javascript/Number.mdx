@@ -1,0 +1,99 @@
+---
+title: Number
+description: Javascript의 Number타입에 대해서 알아본다
+tags:
+  - javascript
+createdAt: 2024-11-12
+thumbnail: /thumbnails/javascript.png
+---
+Number는 Javascript의 원시 타입중 하나입니다. 이번에는 Number에 대해서 알아보고자 합니다. 
+<br/>
+Number는 기본적으로 Javascript에서 숫자를 표현할 때 사용되는 타입입니다. 
+
+## 생성
+당연하지만,  number는 일반적인 숫자를 의미하는 타입입니다. 단순히 숫자를 표기함으로써 생성할 수도 있고, Number 생성자를 통해 생성할 수도 있습니다.
+
+## Number()
+Number() 생성자는 Number 객체를 생성할 수 있는 생성자입니다.
+```javascript 
+const a = new Number("123"); // a === 123 은 거짓
+const b = Number("123"); // b === 123 은 참
+a instanceof Number; // 참
+b instanceof Number; // 참
+
+Number(false); //0
+Number(true); //1
+
+Number('test') // NaN
+```
+이 때, 숫자로 변환할 수 없는 value를 넣는다면 `NaN`을 반환하게 됩니다.
+
+## NaN
+Number의 독특한 값 중 하나로, Not a Number의 약자입니다. Number 타입이지만, 숫자가 아닌 값들 표기하는 오류값 입니다. `isNaN(value)`함수를 통해 value가 NaN인지 판별할 수 있습니다.
+
+## Number.parseInt
+입력된 문자열을 숫자로 변환하는 함수입니다. 숫자로 파싱할 수 없는 문자열을 만나면, 그 순간에서 멈춥니다.
+```javascript
+	console.log(Number.parseInt('123')); // 123
+	console.log(Number.parseInt('123.456')); // 123	
+	console.log(Number.parseInt('123abc')); // 123
+```
+전혀 바꿀 수 없는 문자를 파싱하려고 하면 NaN이 반환된다.
+<br/>
+`parseFloat`는 마찬가지로 파싱하되, 실수로 파싱하는 함수입니다. 따라서 실수화 할 수 있는 가를 판단합니다.
+```javascript
+	console.log(Number.parseFloat('123')); // 123
+	console.log(Number.parseFloat('123.456')); // 123.456
+	console.log(Number.parseFloat('123abc')); // 123
+	console.log(Number.parseFloat('123.456.789')); // 123.456
+```
+
+## Infinity
+Javscript에서는 `Infinity`라는 값이 존재합니다. 따라서 어떤 숫자를 0으로 나누더라도 에러가 출력되는 것이 아니라 `Infinity`가 반환됩니다. `Number.isFinite()` 함수를 통하여 해당 value가 유한한지 확인할 수 있습니다.
+```javascript
+Number.isFinite(1); // true 
+Number.isFinite(Infinity); // false 
+Number.isFinite('1'); // false 
+```
+음의 무한대를 표현하는 `-Infinity`또한 존재합니다. 다만 0을 0으로 나누면 NaN이 반환됩니다.
+
+## -0
+Number에는 0과 -0이 공존합니다. 거의 모든 상황에서 일반적인 0과 같은 값으로 간주됩니다만, 어떤 숫자를 나눌때 결과가 다르게 표기됩니다. 0은 Infinity가, -0은 -Infinity가 반환될 것입니다.
+```javascript
+1 / 0; // Infinity 
+1 / -0; // -Infinity
+```
+
+## 부동소수점
+Javascript에서의 Number는 64비트의 부동소수점으로 표현됩니다. 부동소수점은 다음과 같은 표현식을 의미합니다.  
+
+![[Pasted image 20241112183818.png]]
+순서대로 부호 - 지수 - 가수 부분으로 나뉘어져 있으며 이를 표현하면
+```
+(-1)^부호 * 가수부 * 10^지수부
+```
+로 표현됩니다. Javascript에서는 각각 부호 1bit, 지수부 11bits, 가수부 52bits로 이루어져 있습니다. 이때 가수부가 숫자의 정확도를 나타낸다고 생각하시면 되겠습니다. 정확한 계산법은 여기서 다루지는 않겠습니다.  
+<br/>
+이런 부동소수점은 단점이 하나 있습니다. 바로 정확도 측면에서 문제가 발생한다는 것입니다. 가수부의 비트수가 늘어나면 정확도가 늘어나지만, 그럼에도 정확도에는 한계가 있습니다.   
+따라서 Javascript에서는  -(2^53 - 1) ~ (2^53 - 1) 범위의 수를 **안전한 정수**라 보장할 수 있습니다. 위 범위를 넘어간 수를 연산에 사용할 경우 연산의 안전성을 보장할 수 없게 됩니다.
+<br/>
+`Number.MIN_SAFE_INTEGER`, `Number.MAX_SAFE_INTERGER`로 안전한 정수의 최소치와 최대치를 확인할 수 있습니다. 다만, 결과적으로 안전한 정수 범위 내에 들어갔다고 하더라도 연산 과정에서 안전한 범위를 넘어가는 수를 사용할 경우, 연산의 안전성을 보장할 수 없습니다. 따라서 어떤 숫자가 안전한지, 결과가 안전한지 확인하고 싶다면 `Number.isSafeInteger()`를 통해 확인할 수 있습니다. 물론, 연상에 사용하는 숫자와 결과값 모두를 확인해야 할 것입니다.
+<br/>
+또 부동소수점의 안전한 숫자와는 별개로, 부동소수점을 통한 연산의 정확도에도 한계가 있습니다. 
+```javascript
+console.log(0.1 + 0.2 === 0.3) // false
+```
+위와 같은 결과를 보고 의아해 하실 수 있습니다. 실제로 Javascript에서 0.1과 0.2를 더한 결과는 0.3이 아니라 0.30000000000000004입니다. 부동소수점으로 숫자를 표현하는 것에는 한계가 있기 때문에 이런 결과가 나온 것입니다.  
+<br/>
+이런 오차를 해결하는 방법에는 여러가지가 있습니다. 흔히 사용되는 `toFixed`나 `Math`관련 함수가 있을 수 있습니다. 여기서는 다른 것을 소개해드리겠습니다.
+<br/>
+**Number.EPSILON**이라는 정적값을 통해 두 값이 **비슷한지** 확인할 수 있습니다. Number.EPSILON은 두 부동소수점 사이의 가장 작은 간격을 나타내는 것으로, 이를 통해서 어떤 연산결과의 오차값이 Number.EPSILON 보다 작다면 해당값은 정확한 값이라 유추할 수 있습니다.
+```javascript
+	function isSimilar(x,y){
+		return Math.abs(x-y) < Number.EPSILON;
+	}
+	console.log(isSImilar(0.1+0.2,0.3)) // true
+```
+<br/>
+<br/>
+<br/>

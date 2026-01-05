@@ -1,0 +1,187 @@
+---
+title: Next.js TypeError Failed to parse URL from...
+description: next 사용 중 발생한 에러에 대해 기술한다.
+tags:
+  - next
+  - bugs
+createdAt: 2025-10-29
+thumbnail: /thumbnails/bugs.webp
+draft: false
+---
+## 서론
+
+next를 통해서 개발하던 도중 다음과 같은 문구를 만나게 됐다.
+
+```bash
+TypeError: Failed to parse URL from api/users/search?...
+```
+next의 `Route Handler`를 통해 api를 호출하던 도중 생긴 문제이다. 나는 다음과 같은 코드로 api를 호출하고 있었다.
+
+```tsx
+// api/lib/api.ts
+
+export async function apiGet<T>(url: string): Promise<T> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API ERROR : ${res.status}`);
+  return res.json();
+}
+
+export const API = {
+  async searchUser(username: string) {
+    return apiGet<UserResponse>(
+      `/api/users/search?username=${username}`
+    );
+  },
+};
+...
+
+// page.tsx
+...
+	const resp = await API.searchUser(username); // error
+	
+```
+`lib/api.ts`에서 API wrapper와 API 객체를 export하고 page에서 이를 사용하는 식이었다. 당연히 `api/users/search/route.ts`에서 해당 api를 정의하고 있었다. 
+
+그리고 이 에러의 가장 큰 문제가 있었는데....
+
+이것이 **기존에는 잘 동작하던 코드**였다는 점이다.
+
+---
+## 기존 방식
+
+무엇이 달라진 걸까?  
+이전의 `page.tsx`는 **클라이언트 컴포넌트**였다.
+
+```tsx
+// page.tsx
+...
+	useEffect(()=>{
+		const getUser = async()=>{
+			const resp = await API.searchUser(username);
+			...
+			};
+		getUser();
+		}
+	},[])
+```
+위 코드가 처음에 API를 호출하던 방식이었다. 하지만 `page`를 **서버 컴포넌트**로 바꾸면서 에러가 발생한 것이다. 
+즉, 브라우저에서 실행되는 클라이언트 환경에서 `fetch('/api/users/...')`가 정상적으로 작동했던 것이다.  
+이 경우 `window.location.origin`이 암묵적으로 존재하므로 상대 경로(`'/api/...'`) 요청이 문제없이 동작한다.
+
+## 신규 방식
+
+```tsx
+export default async function Page({
+  params,
+}: {
+  params: { username: string };
+}){
+	const { username } = await params;
+	const resp = await API.searchUser(username); // error
+}
+```
+`page.tsx`를 **서버 컴포넌트(Server Component)** 로 변경한 뒤 에러가 발생했다.
+즉, **동일한 API 호출 코드**가 서버 환경에서는 동작하지 않았다.
+
+---
+## 분석
+
+처음에는 원인을 찾기 어려웠다.  
+하지만 결론은 단순했다.
+
+>서버 컴포넌트는 서버 환경에서 동작한다.
+
+즉, **브라우저 환경이 아니기 때문에 상대 경로(`'/api/users/search?...'`)를 fetch할 수 없다.**
+
+서버에서 `fetch('/api/...')`를 호출하면 Node.js 런타임은 그 경로를 **절대 URL로 해석할 수 없기 때문에**  
+`TypeError: Failed to parse URL`이 발생한다.  
+Node의 `fetch`는 항상 완전한 URL(`https://...`) 형태를 요구하기 때문이다.
+## React Server Component
+
+React Server Component(RSC)는 서버에서 렌더링되는 컴포넌트다.  
+따라서 서버 환경에서 가능한 일과 불가능한 일이 명확히 구분된다.
+
+---
+
+### ✅ 알 수 있는 것
+
+서버에서 실행되기에, Node.js 런타임 수준의 정보와 리소스에 접근 가능하다.
+
+1. **환경 변수**
+    - `process.env` 접근 가능.
+2. **파일 시스템**
+    - `fs` 모듈로 서버 로컬 파일 읽기 가능.
+3. **서버 로직**
+    - 인증, 데이터 전처리, 캐싱 등 가능.
+4. **데이터베이스 / 외부 API**
+    - DB 쿼리나 원격 API 호출 가능.
+5. **요청 컨텍스트 (Next.js 한정)**
+    - `headers()`, `cookies()`로 요청 헤더·쿠키 접근 가능.
+
+### 🚫 알 수 없는 것
+
+서버에서는 브라우저 런타임에 존재하는 정보나 컨텍스트에 직접 접근할 수 없다.
+
+1. **클라이언트 런타임 객체**
+    - `window`, `document`, `localStorage` 등 불가.
+2. **상대 경로 fetch**
+    - 브라우저의 `origin` 개념이 없으므로 `fetch('/api/...')` 불가.
+3. **클라이언트 상태**
+    - 입력값, 스크롤 위치 등 브라우저 이벤트 기반 상태는 알 수 없음.
+4. **정적 빌드 시 요청 정보**
+    - SSG 페이지에서는 `headers()`·`cookies()` 접근 불가.
+
+---
+## 결론
+
+`page.tsx`가 **Server Component로 전환**되면서,  
+Node.js 환경에서 `fetch('/api/...')` 요청이 더 이상 유효하지 않게 되었다.
+
+서버는 `host`나 `origin`을 암묵적으로 알 수 없기 때문에, 상대 경로를 절대 URL로 변환하지 못하고 에러를 던진다.
+
+---
+
+## 해결
+
+가장 단순한 해결책은 **baseURL을 명시하는 것**이다.
+```typescript
+export async function apiGet<T>(url: string): Promise<T> {
+  const API_BASE_URL = process.env.API_BASE_URL; // 추가
+  const res = await fetch(API_BASE_URL + url);
+  if (!res.ok) throw new Error(`API ERROR : ${res.status}`);
+  
+  return res.json();
+}
+```
+혹은 Next.js의 `headers()`를 이용해 **요청 시점의 Host를 동적으로 가져올 수도 있다.**
+
+```typescript
+import { headers } from "next/headers";  
+
+export async function apiGet<T>(url: string): Promise<T> {   
+	const host = headers().get("host");   
+	const protocol = process.env.NODE_ENV === "development" ? "http" : "https"; 
+	const res = await fetch(`${protocol}://${host}${url}`);   
+	if (!res.ok) throw new Error(`API ERROR : ${res.status}`);   
+	return res.json(); 
+}
+```
+
+이렇게 하면 서버 렌더링 중에도 정확한 절대 URL로 API를 호출할 수 있다.
+
+---
+
+## 요약
+
+- React Server Component는 **Node.js 서버 환경에서 실행**된다.
+- 브라우저 컨텍스트(`window`, `host`, `localStorage`)는 존재하지 않는다.
+- Next.js에서는 `headers()`와 `cookies()`를 통해 요청 정보를 접근할 수 있다.
+- API 호출 시에는 **절대 URL을 지정하거나**, **요청 컨텍스트에서 host를 추출**해야 한다.
+
+---
+## 참고 자료
+
+
+[# Next.js 13 에러 삽질기 - TypeError: Failed to parse URL from](https://jgjgill-blog.netlify.app/road/2023-12-28/)
+[# Next.js 공식문서](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+[# React의 RSC, RCC에 대하여](https://funveloper.tistory.com/214)

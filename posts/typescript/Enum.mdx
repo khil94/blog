@@ -1,0 +1,69 @@
+---
+title: Enum
+description: Typescript의 Enum에 대한 정리
+tags:
+  - typescript
+createdAt: 2024-12-30
+thumbnail: /thumbnails/enum.png
+---
+
+# Enum
+
+enum은 Typescript에서 사용되는키워드 입니다.
+
+<br/>
+enum은 상수들의 집합을 정의하기 위해 사용됩니다. 주로 여러 개의 관련된 상수들을 그룹화하고, 해당 상수들을 타입으로 사용할 수 있도록 해줍니다. 
+<br/>
+예시를 들어 설명해보도록 하겠습니다. 
+```typescript
+	enum Colors{
+		Red = "RED",
+		Green = "GREEN",
+		Blue = "BLUE",
+	}
+
+    enum Bool{
+    	False = 0,
+    	True = 1,
+    }
+
+````
+위와 같은 다양한 상수들을 정의하는 enum을 정의할 수 있습니다.
+
+또한 기본적으로 value가 number인 경우에는 아래와 같은 양방향 매핑을 지원합니다.
+
+```typescript
+	console.log(Bool['False']); // 0
+	console.log(Bool[0]) // 'False'
+````
+
+enum은 다른 언어에서는 이미 존재했던 문법으로, 그 장점을 대부분 공유합니다. 대표적인 장점으로는 다음과 같은 것들이 있습니다.
+
+### 장점
+
+- 반드시 key-value 매핑된 값들을 사용해야 하므로, 사용자 에러를 사전에 방지할 수 있습니다.
+- 코드를 보면 의도를 명확히 알 수 있기 때문에, 가독성이 향상됩니다.
+- 양방향 매핑을 이용해야 할 경우, 매핑을 자동으로 시켜줄 수 있어 용이합니다. (value가 number형일 경우)
+
+하지만 단점도 굉장히 많은 기능입니다.
+
+### 단점
+
+#### 1. Tree Shaking이 되지 않는다.
+
+enum은 기본적으로 Js에서는 존재하지 않던 기능입니다. 따라서 이를 트랜스파일하여 변환하게 됩니다.
+
+```typescript
+export var Bool;
+(function (Bool) {
+  Bool[(Bool["False"] = 0)] = "False";
+  Bool[(Bool["True"] = 1)] = "True";
+})(Bool || (Bool = {}));
+```
+
+enum은 위와 같이 IIFE의 형태의 코드로 컴파일링되게 됩니다. 그런데 번들러는 **IIFE를 '사용되지 않는 코드'라고 판단할 수 없습니다!** 때문에 enum으로 만든 Bool은 import만 하고 실제로는 사용하지 않더라도 최종 번들에는 포함되게 되는 겁니다.
+
+다만 `const enum`을 사용하게 되면 보다 간결하게 변환되며, Tree Shaking도 적용되게 됩니다. 하지만 이는 다른 추가적인 문제점이 존재합니다.
+
+- babel을 사용하는 경우, 이를 트랜스파일링하지 못해 추가적인 플러그인이 필요합니다.
+- 문자열의 값을 유니코드로 생성하여 빌드 파일의 크기가 커집니다. 규모가 작은 프로젝트라면 괜찮을 수 있지만, 프로젝트의 크기가 커질수록 문제가 될 수 있습니다.

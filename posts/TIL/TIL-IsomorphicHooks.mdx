@@ -1,0 +1,98 @@
+---
+title: Isomorphic Hooks
+description: Isomorphic 방법론에 대해서 알아본다
+tags:
+  - TIL
+  - react
+  - javascript
+createdAt: 2025-11-10
+thumbnail: /thumbnails/til.png
+draft: false
+---
+## What I Learned
+
+### 서론
+
+Next.js 환경에서 개발을 하다 보면 자주 보게 되는 에러 문구가 있다.
+
+> window is not defined
+
+바로 Server component를 사용할 때, 서버 환경에서는 window가 없기 때문에 나타나는 에러이다. 그럴 때, 간단하게 해결하는 방법으로는 typeof window === 'undefined' 등으로 판단하는 법이 있지만, 이런 부분을 매번 쓰기보다는 공통화해서 쓰는것이 낫다.
+
+
+### 본론
+
+Isomorphic이란 '동형사상'이라는 뜻으로, 이곳에서는 *서버와 브라우저 양쪽에서 실행가능한* 것을 의미한다.
+
+옛날에는 그럴 일이 없었지만, 프론트엔드 환경이 변하며 중요성이 높아진 케이스다.
+
+환경에 따라 사용할 수 있는 API가 다르기 때문에, 양쪽의 환경에서 구동하는 것을 고려해야 하는 것이다. 예시로는 아래와 같다.
+
+|API|서버 (Node.js)|브라우저|
+|---|---|---|
+|window|X|O|
+|document|X|O|
+|localStorage|X|O|
+|fs (파일시스템)|O|X|
+|process|O|X|
+|console|O|O|
+|fetch|O (Node 18+)|O|
+
+## 구현
+
+예를 들어, 서버 컴포넌트 환경에서 useLayoutEffect를 쓰면 에러가 출력된다. useLayoutEffect는 브라우저가 화면을 그리기 전에 동기적으로 실행되는데, 자세한 내용은 다음과 같다.
+
+![](public/images/Pasted%20image%2020251110225537.png)
+
+서버에는 DOM이 없기 때문에 useLayoutEffect는 DOM 레이아웃이 계산된 후에 실행 되는 훅이므로 서버에서는 의미없는 코드가 되기 때문이다. 
+
+서론이 길었는데, 결론은 `서버에서는 useEffect`를 `클라이언트에서는 useLayoutEffect`를 사용하게끔 하는 것이다. 
+
+```typescript 
+// isClient.ts
+export function isClient(){
+	return typeof window !== 'undefined';
+}
+
+// useIsomorphicLayoutEffect.ts
+export const useIsmorphicLayoutEffect = isClient() ? useLayoutEffect : useEffect;
+
+```
+
+위처럼 사용하면 끝이다. 즉 서버 환경을 판정하고 -> 환경에 맞는 값을 반환하면 된다...
+
+이렇게 끝내면 심심하니까 한 가지 예시를 더 적는다.
+
+### Ismorphic Storage
+```typescript
+class IsomorphicStorage {
+  constructor() {
+    this.store = new Map();
+  }
+  
+  getItem(key) {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return this.store.get(key);
+  }
+  
+  setItem(key, value) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(key, value);
+    } else {
+      this.store.set(key, value);
+    }
+  }
+}
+
+export const storage = new IsomorphicStorage();
+```
+
+결론적으로 SSR환경을 사용하고, Server component를 잘 활용할 생각이라면 Isomorphic 패턴에 대해서 유념하는 것이 좋겠다.
+## 참고 자료
+
+[usehooks-ts](https://usehooks-ts.com/react-hook/use-isomorphic-layout-effect)
+[Isomorphic : 서버와 클라이언트에서 모두 사용가능한 코드 만들기](https://velog.io/@hyojun99222/Isomorphic-%EC%84%9C%EB%B2%84%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%97%90%EC%84%9C-%EB%AA%A8%EB%91%90-%EC%82%AC%EC%9A%A9-%EA%B0%80%EB%8A%A5%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+
+

@@ -1,0 +1,91 @@
+---
+title: Could not find a module `name`
+description: Typescript module 버그
+tags:
+  - typescript
+  - bugs
+createdAt: 2024-10-11
+thumbnail: /thumbnails/bugs.webp
+---
+
+Typescript로 개발을 하던 도중, 다음과 같은 문구를 만나게 되었다.
+
+```node
+Could not find a declaration file for module 'react-fullpage'
+```
+
+직역해보자면, 모듈 'react-fullpage'에 대한 선언을 찾을 수 없다는 뜻이다. 그리고 다음과 같은 안내 문구가 출력되었다.
+
+```node
+ `Try `npm i --save-dev @types/react-fullpage` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-fullpage'`;`
+```
+문구에서는 @types/react-full-page를 install하라고 하고 있지만, 이를 수행해도 에러는 고쳐지지 않았다. 때문에 다른 제안인 새로운 선언파일(.d.ts)를 만들고자 하였다. 
+
+하지만 애초에 이러한 에러는 왜 출력된 것일까? 처음 문구를 보면 'react-full-page'라는 모듈에 대한 선언이 존재하지 않는다고 하고 있다. 
+
+원인은 바로 해당 라이브러리가 typescript를 지원하지 않기 때문이었다. 때문에 @types/library-name으로 typescript에 대한 선언파일을 install할 것을 제안한 것이었다. 하지만 내가 사용하려고 한 위 라이브러리는 오래된 라이브러리라 typescript를 지원하지 않았고 직접 파일을 작성하기로 하였다.
+
+
+### .d.ts 파일
+
+typescript에서 존재하는 .d.ts는 바로 type을 정의하기 위해 존재하는 파일이다. 일례로, typescript를 지원하는 라이브러리를 살펴보면 index.d.ts 따위의 파일이 존재하는 것을 확인할 수 있다. 혹은 node_moudles에 존재하는 @types 폴더도 확인할 수 있다. (바로 이 폴더가 타입선언만 포함된 모듈들이다.)
+
+하지만 내 경우처럼 typescript를 전혀 지원하지 않는 라이브러리가 간혹 존재한다. 이럴때는 사용자가 직접 @type폴더를 만들고 그 안에 타입을 선언할 수 있다. 
+
+### tsconfig.json
+단 custom types를 선언하고자 한다면 tsconfig.json의 설정도 수정해야 한다.
+
+```json
+"compilerOptions":{
+	"typeRoots": [
+      "../node_modules/@types",
+      "../@types"
+    ]
+}
+```
+typeRoots설정은 typescript가 정의되어있는 type을 찾는 공간을 정의하는 설정으로, 기본 설정은 "../node_modules/@types"만 적혀있다. 나 또한 custom types를 만들었기에 위 "../@types"를 추가하였다. 
+### .d.ts 파일의 구조
+
+.d.ts파일은 타입의 선언만 존재해야 한다. 
+
+```typescript
+    declare module "react-full-page" {
+      type ControlComponentsProps = {
+        getCurrentSlideIndex: () => number;
+        onNext: () => void;
+        onPrev: () => void;
+        scrollToSlide: (n: number) => void;
+        slidesCount: number;
+        children: React.ReactNode;
+      };
+    
+      type FullPageProps = {
+        initialSlide?: number;
+        duration?: number;
+        controls?: boolean | React.FC<ControlComponentsProps>;
+        controlProps?: any;
+        beforeChange?: () => void;
+        afterChange?: () => void;
+        scrollMode?: "full-page" | "normal";
+        children: React.ReactNode;
+      };
+    
+      type SlideProps = {
+        children: React.ReactNode;
+        style?: { maxHeight: string };
+      };
+    
+      export const FullPage: React.FC<FullPageProps>;
+    
+      export const Slide: React.FC<SlideProps>;
+    }
+    ```
+위 파일은 라이브러리 react-full-page의 index.d.ts파일이다. 
+
+즉 export 할 파일의 interface를 선언하고, 해당 타입의 변수를 선언하여 export 하는 방식이다. 물론 모듈의 모든 내용을 선언할 필요는 없고, 본인이 쓰고자 하는 부분만 쓰는것도 가능하다. 혹은 아예 이러한 선언을 하지 않고 
+
+```typescript
+declare module 'library-name'
+```
+으로 사용하는 것도 가능은 할 것이다. 다만 이렇게 한다면 intellisense나 typecheck는 되지 않기에, 가능하면 이렇게 사용하는 것은 권장하지 않는다.
+

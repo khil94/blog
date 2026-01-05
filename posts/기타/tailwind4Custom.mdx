@@ -1,0 +1,215 @@
+---
+title: tailwind css 4.0 커스텀 세팅
+description: tailwind css의 v4 에 대해서 간단히 알아본다.
+tags:
+  - css
+  - tailwindCSS
+createdAt: 2025-04-02
+thumbnail: /thumbnails/tailwindCSS.png
+---
+## 개요
+
+올해 1월에 tailwind CSS 4.0 버전이 출시되었다. 성능과 유연성을 최적화 했다고 하며, [많은 것이 바뀌었다고 하니](https://tailwindcss.com/blog/tailwindcss-v4) 기존에 tailwind를 사용하던 사람은 한 번 확인해보는 것이 좋을 것 같다. 
+
+하지만 이번 글에서 다뤄볼 주제는 기존에 tailwind.config.js 를 통해서 설정하던 커스텀 세팅을 4버전에서 하는 방법이다. 
+
+## tailwind.config(~v3)
+
+우선 기존에 사용하던 tailwind.config.js의 구성을 한 번 살펴보자.
+
+```javascript
+module.exports = { 
+	content: ['./src/**/*.{html,js}'], 
+	theme: { 
+		colors: { 
+			'blue': '#1fb6ff', 
+			'purple': '#7e5bef', 
+			'pink': '#ff49db', 
+			'orange': '#ff7849', 
+			'green': '#13ce66', 
+			'yellow': '#ffc82c', 
+			'gray-dark': '#273444', 
+			'gray': '#8492a6', 
+			'gray-light': '#d3dce6', 
+		},
+		fontFamily: { 
+			sans: ['Graphik', 'sans-serif'], 
+			serif: ['Merriweather', 'serif'], 
+		}, 
+		extend: { 
+			spacing: { '8xl': '96rem', '9xl': '128rem' }, 
+			borderRadius: { '4xl': '2rem' } 
+		} 
+	}, 
+}
+```
+기본적인 내용이 들어있는 구조지만, 알아보기 쉽게 하기 위해 이를 더욱 단순화하면 이렇게 된다. 주로 사용하는 옵션은 다음과 같다.
+
+```javascript
+module.exports = { 
+	content: [], 
+	theme: { 
+		extend: {}, 
+	}, 
+	plugins: [], 
+	presets: [],
+}
+```
+각 항에 대한 간단한 설명을 하자면 다음과 같다.
+
+- **content** : tailwind 클래스 이름이 포함되는 모든 HTML, Js 구성요소 등이 포함되는 경로를 정의한다. 
+- **theme** : 자신의 커스텀 색상, 폰트, border 사이즈, 애니메이션 등을 정의하는 곳이다. 
+- **plugin** : 사용할 여러가지 플러그인들을 정의하는 곳이다. 
+- **presets** : 기본 설정 대신 사용할 프리셋을 지정한다.
+
+사용자는 이 설정 파일을 이용해 tailwind의 여러가지 설정을 입맛대로 조정할 수 있었다. 하지만 v4로 바뀌며, 이 설정 파일이 사라졌고 v4에서는 이를 어떻게 대체했는지 알아보도록 한다.
+
+
+## Content(v4)
+
+v4에서는 Content가 삭제됐다! v4에서는 tailwind class 가 적용될 곳을 자동으로 감지하게 업데이트 되었다. 예를 들어, 사용자의 '.gitignore' 파일에 들어있는 파일을 자동적으로 무시하는 식이다. 
+
+또한 모든 이미지, 비디오, .zip 파일등을 자동적으로 무시하도록 변했다. 
+
+만약 사용자가 추가적으로 기본적으로 제외되는 소스를 명시해야 하는 경우에는 css 파일에 @source 지시문을 이용하여 명시할 수 있다.
+```css
+@source '../node_modules/@my-company/ui-lib'
+```
+
+
+
+## Theme(v4)
+이 글을 쓰게 된 계기이자 v4에서 가장 큰 변화 점이다. 바로 프로젝트를 Js로 구성하는 것에서 CSS로 구성하게 바뀐 것인데, 이에 따라서 기존에 theme 내부에 정의하는 커스텀 테마 값들은 모두 CSS에 정의하도록 바뀌었다. 
+
+CSS파일에 @theme 지시어를 사용하여 정의하며, 정의하는 방법은 다음과 같다. 예시를 보자.
+```css
+@import "tailwindcss";
+
+@theme {
+
+	--font-display: "Satoshi", "sans-serif";
+	
+	--breakpoint-3xl: 1920px;
+	
+	--color-avocado-100: oklch(0.99 0 0);
+	--color-avocado-200: oklch(0.98 0.04 113.22);
+	--color-avocado-300: oklch(0.94 0.11 115.03);
+	--color-avocado-400: oklch(0.92 0.19 114.08);
+	--color-avocado-500: oklch(0.84 0.18 117.33);
+	--color-avocado-600: oklch(0.53 0.12 118.34);
+	
+	--ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+	--ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+	
+	/* ... */
+}
+```
+
+이렇듯 기존에 사용하던 커스텀 클래스, 색상 등은 @theme을 통해서 정의하도록 바뀌었다. @theme 에서 특정 지시어를 사용함으로써 테마 변수를 정의할 수 있다. 
+
+```css
+@theme{
+	--color-mint-500 : oklch(0.72 0.11 178);
+}
+```
+이렇게 정의하면 사용자는 mint-500 이라는 색상을 정의한 것이 되고, 이를 기존 tailwind class를 사용하듯이 사용할 수 있다.
+
+```javascript
+<div class="bg-mint-500">
+ <!-- ... -->
+</div>
+```
+또한 tailwind는 테마 변수에 대한 일반 css 변수도 생성하므로, 다음과 같이 토큰을 참조할 수도 있다.
+
+```javascript
+<div style="background-color: var(--color-mint-500)">
+ <!-- ... -->
+</div>
+```
+
+각 지시어는 [tailwind 공식문서](https://tailwindcss.com/docs/theme)를 확인하면 자세하게 확인할 수 있으니 참고하자. 몇 가지 예시만 적자면
+
+| 네임스페이스             | 유틸리티 클래스                                    |
+| ------------------ | ------------------------------------------- |
+| `--color-*`        | `bg-red-500`, `text-sky-300`, 등과 같은 색상 유틸리티 |
+| `--font-*`         | 글꼴 패밀리 유틸리티와 같은`font-sans`                  |
+| `--text-*`         | 글꼴 크기 유틸리티와 같은`text-xl`                     |
+| `--font-weight-*`  | 글꼴 두께 유틸리티와 같은`font-bold`                   |
+| `--tracking-*`     | 문자 간격 유틸리티와 같은`tracking-wide`               |
+| `--leading-*`      | 줄 높이 유틸리티와 같은`leading-tight`                |
+| `--breakpoint-*`   | 다음과 같은 반응형 중단점 변형`sm:*`                     |
+| `--container-*`    | 컨테이너 쿼리 변형 `@sm:*`및 크기 유틸리티와 같은`max-w-md`   |
+| `--spacing-*`      | `px-4`, `max-h-16`등과 같은 간격 및 크기 조정 유틸리티     |
+| `--radius-*`       | 다음과 같은 경계 반경 유틸리티`rounded-sm`               |
+| `--shadow-*`       | 상자 그림자 유틸리티와 같은`shadow-md`                  |
+| `--inset-shadow-*` | 인셋 박스 그림자 유틸리티와 같은`inset-shadow-xs`         |
+| `--drop-shadow-*`  | 드롭 섀도 필터 유틸리티는 다음과 같습니다.`drop-shadow-md`    |
+| `--blur-*`         | 블러 필터 유틸리티와 같은`blur-md`                     |
+| `--perspective-*`  | 다음과 같은 관점 유틸리티`perspective-near`            |
+| `--aspect-*`       | 종횡비 유틸리티와 같은`aspect-video`                  |
+| `--ease-*`         | 전환 타이밍 기능 유틸리티와 같은`ease-out`                |
+| `--animate-*`      | 애니메이션 유틸리티와 같은`animate-spin`                |
+@keyframes 등의 애니메이션도 @theme 지시어 내부에 그대로 정의하면 된다.
+
+```css
+@theme {
+	--animate-fade-in-scale: fade-in-scale 0.3s ease-out;
+
+	@keyframes fade-in-scale {
+		0% {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+}
+```
+
+다만 주의할 점으로 :root에 정의하는 것이 아닌 @theme에 정의하는 것에 유의해야 한다. tailwind 유틸리티 클래스로 정의하고자 한다면 @theme 지시어를 사용하여 이를 명시해야 한다.
+
+## 동적 값 및 변형
+
+다소 주제와 관련이 없어보이기도 하지만, 아주 없다고 볼 수도 없기 때문에 이야기 하고자 한다. 기존의 tailwind에서는 특정 값에 대한 유틸리티 클래스만 존재하여, 사용자가 이를 커스텀 하기 위해서는 따로 정의하거나 특정한 문법을 사용했어야 했다.
+
+```html
+<div class="gird grid-cols-[15rem]">
+ ...
+ </div>
+```
+와 같은 식이다. 하지만 v4 부터는 지정되지 않은 값에 대해서도 자동적으로 대응하게 된다. 따라서 
+```html
+<div class="gird grid-cols-15">
+ ...
+ </div>
+```
+와 같이 특정값에 대해서 기술하더라도 이를 처리할 수 있게 되었다. 뿐만 아니라 사용자 정의 데이터 속성에 대해서도 타겟으로 지정할 수 있게 되었다.
+```html
+<div data-current class="opacity-75 data-current:opacity-100">
+ ...
+ </div>
+```
+
+
+## JS config 파일 사용
+만일 사용중이던 서비스에서 의도치 않게 업그레이드를 진행했다면, 기존의 설정 파일을 그대로 사용할 수도 있다.
+
+tailwindCSS는 @config를 이용하여 기존의 설정 파일을 로드할 수 있게 지원하고 있다.
+```css
+@config "../../tailwind.config.js"
+```
+
+단, 설정 파일의 `corePlugins`, `safelist`, `separator` 옵션은 지원하지 않으니 유의하도록 하자.
+
+
+## Plugin
+
+기존에 사용중인 JS 기반 플러그인은 @config와 마찬가지로, @plugin 지시어를 사용하여 로드한다.
+
+```css
+@plugin "@tailwindcss/typography";
+```
+
+

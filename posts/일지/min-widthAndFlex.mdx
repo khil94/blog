@@ -1,0 +1,79 @@
+---
+title: min-width와 flex
+description: min-width가 동작하는 방식에 대해서 알아본다
+tags:
+  - css
+  - 일지
+createdAt: 2025-04-03
+thumbnail: /thumbnails/css.png
+---
+## 개요
+
+이번에 개발을 하며 이런 일이 생겼었다.
+
+```javascript
+<div className="w-full">
+	<div className="flex w-[40%]>
+		...
+	</div>
+	<div className="flex w-[60%]">
+		...
+	</div>
+</div>
+```
+
+이런 식으로 좌우로 공간을 나누고, 각 공간에서 컴포넌트를 정렬하고 있었다. 하지만 개발 도중 각 공간의 자식 컴포넌트가 부모 컴포넌트의 크기를 넘어버리는 일이 발생했다.
+
+![Pasted image 20250403005417.png](app://d541efa02bb15228a377d227607eb8e0c45e/C:/Users/khilk/Documents/%EA%B0%9C%EB%B0%9C%EC%9D%BC%EC%A7%80/Attached%20file/Pasted%20image%2020250403005417.png?1743609257408)  
+위 사진이 당시 사진인데, 왼쪽의 컴포넌트가 화면 밖으로 까지 width가 커져서 넘치는 모습을 볼 수 있다. 굉장히 단순한 실수라고 봤기에, 간단하게 고칠 수 있을 것이라 생각했지만 꽤 고생을 해서 고친 기억이 있다.
+
+그 이유와 해결 방법에 대해서 기술하고자 한다.
+
+## min-width
+
+min-width 라는 css 속성을 알고 있을 것이다. min-width는 요소의 최소 너비 값을 지정하는 속성으로 default값은 auto이다.
+
+추가로 특기 할 것은 min-width는 width나 max-width 속성보다 우선해서 적용되는 점이다. 즉 min-width가 max-width나 width 속성보다 크다면 min-width 를 기준으로 너비가 결정된다.
+
+하지만 이런 부분이 내가 겪은 문제와 무슨 연관이 있을까? 바로 flex 와 grid 에서 적용되는 min-width의 특징과 관련이 있다. mdn 문서를 보면 다음과 같이 설명하고 있다.
+
+```
+
+values - auto
+
+The default value. The source of the automatic value for the specified element depends on its display value. For block boxes, inline boxes, inline blocks, and all table layout boxes `auto` resolves to `0`.
+
+For flex items and grid items, the minimum width value is either the specified suggested size, such as the value of the `width` property, the transferred size, calculated if the element has an `aspect-ratio` set and the height is a definite size, otherwise, the `min-content` size is used. If the flex or grid item is a scroll container, or if a grid item spans more than one flexible column track, the automatic minimum size is `0`.
+
+-------
+
+기본값입니다. 지정된 요소에 대한 자동 값의 소스는 표시 값에 따라 다릅니다. 블록 상자, 인라인 상자, 인라인 블록 및 모든 표 레이아웃 상자의 경우 자동 해상도가 0으로 설정됩니다.
+
+플렉스 항목 및 그리드 항목의 경우 최소 너비 값은 너비 속성 값과 같은 지정된 권장 크기, 요소에 가로 세로 비율이 설정되어 있고 높이가 확실한 크기인 경우 계산된 전송 크기, 그렇지 않은 경우 최소 콘텐츠 크기가 사용됩니다. 플렉스 또는 그리드 항목이 스크롤 컨테이너이거나 그리드 항목이 두 개 이상의 플렉스 열 트랙에 걸쳐 있는 경우 자동 최소 크기는 0입니다.
+```
+
+간단하게 정리하면 다음과 같다.
+
+### 1. 일반적인 블록 요소
+
+block, inline-block, table 등에서 min-width 값은 기본적으로 0으로 해석된다. 즉, 블록 요소에서 min-width : auto가 크기를 확장시키는 일은 없다는 뜻으로 볼 수도 있을 것이다.
+
+### 2. flex 또는 grid 요소 일 때
+
+위 경우와 다르게 flex 또는 grid 요소일 때는,
+
+1. 기본적으로 지정된 자신의 크기가 있다면 그것을 최소 크기로 사용한다.
+2. 그렇지 않다면
+    1. aspect-ratio가 설정되어 있고 높이가 고정되어 있다면, 비율을 계산해서 최소 크기를 정함
+    2. 그렇지 않다면 min-content 를 최소 크기로 사용함
+3. 만약 요소가 scroll container거나 grid에서 여러 열을 차지하는 경우에는 최소 크기는 0으로 변경된다.
+
+즉 정리하자면, flex나 grid환경에서 min-width 몇 가지 규칙에 의해서 결정되고, 내 경우에는 2-2의 경우에 해당하는 경우였던 것이다!
+
+## 정리
+
+min-width 는 기본적으로 auto이며 대부분의 요소에서는 0으로 동작하지만, flex나 grid 환경에서는 다른 규칙을 적용 받는다. 이에 따른 규칙을 알지 못하면 굉장히 헤맬 수 있는 문제였다.
+
+역시 문제 해결의 가장 좋은 방법은 공식 문서라는 것을 다시금 깨닫는 계기가 되었다.
+
+참조 : [mdn](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)

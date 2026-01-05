@@ -1,0 +1,142 @@
+---
+title: useTransition
+description: React의 useTransition에 대해서 알아본다.
+tags:
+  - react
+createdAt: 2025-11-10
+thumbnail: /thumbnails/react.png
+draft: false
+---
+
+## 서론
+
+React 애플리케이션이 커질수록 사용자 입력과 화면 갱신이 동시에 일어나는 경우가 많다.  
+이때 무거운 연산이나 렌더링이 포함되면, 클릭이나 입력 반응이 늦어지는 **UI 지연 문제**가 발생한다.  
+`useTransition`은 이런 상황에서 **“사용자 인터랙션의 즉시성”과 “화면 업데이트의 완전성”을 분리**해주는 React 18의 새로운 훅이다.  
+즉, **“급한 일과 덜 급한 일”을 구분해서 처리**할 수 있게 만든 도구다.
+
+## 본론
+
+### 1. 기본 개념
+
+`useTransition`은 간단히 말해 **상태 변경의 우선순위를 낮춰주는 훅**이다.  
+이 훅을 사용하면 React가 “이건 급한 일이 아니니까 나중에 처리해도 돼”라고 판단하게 만든다.
+
+`useTransition`은 **상태 업데이트를 “전환(transition)”으로 표시**하고,  
+이 전환 중에는 React가 **사용자 입력 처리 같은 더 중요한 작업을 우선시**할 수 있게 한다.
+
+사용 예시는 다음과 같다:
+
+```jsx
+import { useTransition, useState } from "react";
+
+function SearchBox({ items }) {
+  const [isPending, startTransition] = useTransition();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState(items);
+
+  function handleChange(e) {
+    const value = e.target.value;
+    setQuery(value);
+
+    // 급하지 않은 업데이트 (렌더링 비용이 큰 경우)
+    startTransition(() => {
+      const filtered = items.filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase())
+      );
+      setResults(filtered);
+    });
+  }
+
+  return (
+    <>
+      <input
+        value={query}
+        onChange={handleChange}
+        placeholder="검색어를 입력하세요"
+      />
+      {isPending && <p>검색 중...</p>}
+      <ul>
+        {results.map((r) => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+```
+
+### 2. `isPending`의 역할
+
+`isPending`은 현재 전환이 진행 중인지 알려준다.  
+이를 이용해 로딩 상태나 시각적 피드백을 제공할 수 있다.  
+예를 들어 “검색 중…”이나 “결과 업데이트 중” 같은 메시지를 띄워 사용자 혼란을 줄인다.
+
+이건 단순하지만 UX 측면에서 매우 효과적이다.  
+사용자는 “앱이 멈춘 게 아니라 작업 중이구나”라고 즉시 이해하게 된다.
+
+### 3. `Suspense`와 함께 쓰기
+
+`useTransition`은 `Suspense`와도 궁합이 좋다.  
+전환 중에 **새로운 데이터나 컴포넌트 로딩이 필요할 때**,  
+`Suspense`의 fallback UI가 자연스럽게 나타난다.
+
+```jsx
+import { Suspense, useTransition } from "react";
+
+function ProfilePage({ userId }) {
+  const [isPending, startTransition] = useTransition();
+  const [id, setId] = useState(userId);
+
+  return (
+    <>
+      <button
+        onClick={() => startTransition(() => setId("next-user"))}
+        disabled={isPending}
+      >
+        다음 사용자 보기
+      </button>
+
+      {isPending && <p>데이터 로딩 중...</p>}
+
+      <Suspense fallback={<p>프로필 불러오는 중...</p>}>
+        <Profile userId={id} />
+      </Suspense>
+    </>
+  );
+}
+```
+
+이 구조에서는:
+
+- `startTransition`으로 전환을 시작하면  
+   React가 `Profile` 컴포넌트를 새로 불러오는 동안  
+   `Suspense`의 fallback(`프로필 불러오는 중...`)이 표시된다.
+- 전환이 완료되면 새 사용자 정보가 부드럽게 화면에 반영된다.
+
+이렇게 하면 **데이터 로딩과 렌더링이 끊기지 않는 사용자 경험**을 제공할 수 있다.
+
+### 4. 주의점
+
+- `useTransition`은 성능을 “향상”시키는 훅이 아니다. 실제 연산 속도가 빨라지는 건 아니고, **사용자 체감 속도를 높이는 방식**이다.
+- 모든 상태 변경에 쓸 필요는 없다. “입력 반응성을 해칠 정도로 무거운 렌더링”에만 사용하는 것이 맞다.
+- `useDeferredValue`와의 차이는, `useTransition`은 “상태 변경의 시작을 제어”하고, `useDeferredValue`는 “이미 존재하는 값의 렌더링 시점을 늦춘다”는 점이다.
+
+## 결론
+
+화면 렌더링을 늦추는 대신, 사용자가 느끼는 반응성은 유지한다.  
+즉, “느린 연산”을 “부드러운 연산”으로 바꿔주는 장치다.
+
+정리하자면:
+
+- 서버나 클라이언트 모두에서 사용할 수 있다.
+- 사용자 입력은 즉각 반응한다.
+- 무거운 UI 갱신은 백그라운드에서 자연스럽게 진행된다.
+
+검색, 필터링, 데이터 로딩 등에서 UI가 “끊긴다”는 느낌이 든다면,  
+`useTransition`으로 그 간극을 매끄럽게 메워보자.
+
+## 참고 자료
+
+[useTransition - React](https://ko.react.dev/reference/react/useTransition)
+[Suspense와 useTransition](https://velog.io/@onedanbee/Suspense%EB%9E%80)

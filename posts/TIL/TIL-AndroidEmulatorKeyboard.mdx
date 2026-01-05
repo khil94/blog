@@ -1,0 +1,23 @@
+---
+title: TIL - 안드로이드 에뮬레이터 키보드 입력 설정
+description: 안드로이드 에뮬레이터에 키보드를 입력하는 법
+tags:
+  - TIL
+createdAt: 2025-10-21
+thumbnail: /thumbnails/til.png
+draft: false
+---
+## What I Learned
+
+### 서론
+- 안드로이드 에뮬레이터는 기본적으로 키보드 입력을 받지 않는다. 때문에 일일이 에뮬레이터의 화면의 가상 키보드를 클릭해 입력하거나, 본인의 핸드폰을 에뮬레이터로 이용할 수 있으나..
+- 간단한 설정을 통해 이를 해결할 수 있다.
+
+### 본론
+- 우선, android studio에서 현재는 설정할 수 없는 것으로 보인다. 이전 자료들을 확인하면 에뮬레이터 설정에서 키보드 인풋을 받을 수 있게 설정할 수 있다고 하는 자료들이 많지만, 현재는 불가능한 것으로 보인다.
+- 때문에 현재는 조금 번거로운 방법으로 키보드를 입력할 수 있다.
+```terminal
+users/USER_NAME/.android/avd/EMULATOR_NAME 
+```
+에 존재하는 config.ini 파일을 수정한다. 파일을 열고
+`hw.keyboard = no`를 수정해 `hw.keyboard = yes`로 바꾸면 이 후부터는 정상적으로 키보드를 입력할 수 있다.

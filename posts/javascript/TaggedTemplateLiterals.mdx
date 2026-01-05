@@ -1,0 +1,65 @@
+---
+title: tagged template literals
+description: javscript의 tagged template literals에 대해서 알아보자
+tags:
+  - javascript
+createdAt: 2024-11-14
+thumbnail: /thumbnails/javascript.png
+---
+## 개요
+tagged template literals는 백틱(\`)을이용하는 template literals에서 발전된 형태입니다. 기존의 template literals 에서 발전하여 함수형태로 쓸 수 있는 것이 특징입니다. 이 문법은 문자열에서 변수와 정적인 문자열을 구별할 수 있습니다. 
+```javascript
+function tag(strings, ...values){
+	// 템플릿 리터럴의 문자열 부분은 strings 배열에 담기고
+	// 변수는 values 배열에 담기게 됩니다.
+	console.log(strings); // ["Hello "," world!"]
+	console.log(values); /// ["Javascript"]
+	return strings[0]+values[0]+strings[1];
+}
+const val = 'Javascript';
+const result = tag`Hello ${val} world!`;
+console.log(result); // Hello Javascript wrold!
+```
+위 예제에서 `tag`함수는 템플릿 리터럴의 문자열과 변수를 분리해서 받습니다. 그리고 문자열 부분을 `stirngs`에 변수 부분을 `values`에 받게됩니다.  
+
+
+## 활용
+`styled-components`를 사용해보신 분이라면 이미 이런 방식에 대해 알고 계실 겁니다. 한번 예시를 살펴보겠습니다.
+
+```jsx
+const Btn = styled.Button`
+  color: ${props => props.color || "red"};
+`;
+```
+`styled-componetns`의 컴포넌트를 만드는 기본적인 예시입니다. 템플릿 리터럴로 입력된 문자열과 변수를 활용하여 스타일의 속성값을 조작하고 `props`라는 변수를 활용하고 있는 모습입니다.   
+<br/>
+이런 방식으로 특정 문자열에 해당하는 부분만 하이라이트 처리하는 방식 등으로 사용할 수 있습니다. 
+
+```jsx
+function highlight(strings, ...values) { 
+
+	return strings.reduce((acc, str, i) => { 
+	// 텍스트와 변수를 순차적으로 결합 
+		return ( 
+			<> 
+				{acc}
+				{str} 
+				{i < values.length 
+					&& <span style={{ color: 'blue', fontWeight: 'bold' }}>
+						{values[i]}</span>
+				} 
+			</> 
+		); 
+	}, ""); 
+}
+
+export default function App() { 
+	const userName = "John"; 
+	const greeting = highlight`Hello, ${userName}! Welcome to our site.`; 
+	
+	return <div>{greeting}</div>; }
+```
+위 코드를 실행하면 useName이 파랗게 하이라이트 처리될 것입니다. 위와 같은 예시 뿐 아니라 다양한 방법으로 `values`와 `strings`를 포매팅할 수 있을 것입니다.
+
+## 결론
+사실 기본적으로 쓸 일이 많은 기능은 아닙니다. 하지만 `styled-components`나 `graphQL`,`Jest` 등에서 이미 적용되어 사용하고 있습니다. 때문에 단순히 해당 라이브러리를 사용하는 것보다, JS의 어떤 기능에서 기인한 방식이며, 어떤 원리로 동작하는지 알아보면 좋을 것입니다.
