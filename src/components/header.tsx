@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
 
@@ -9,10 +9,13 @@ export function Header() {
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-bold text-xl">
-            Blog
+            Home
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            <Link href="/tags" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href="/tags"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Tags
             </Link>
           </nav>
