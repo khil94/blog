@@ -1,11 +1,12 @@
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
+import readingTime from "reading-time";
 
 const postsDirectory = path.join(process.cwd(), "posts");
 const IGNORED_DIRECTORIES = [".obsidian", ".git", "node_modules"];
 
-function normalizeFrontmatter(data: Record<string, unknown>): PostFrontmatter {
+function normalizeFrontmatter(data: Record<string, unknown>, content: string): PostFrontmatter {
   return {
     title: String(data.title || ""),
     description: String(data.description || ""),
@@ -16,6 +17,7 @@ function normalizeFrontmatter(data: Record<string, unknown>): PostFrontmatter {
         : String(data.createdAt || ""),
     thumbnail: data.thumbnail ? String(data.thumbnail) : undefined,
     draft: Boolean(data.draft),
+    readingTime: readingTime(content).text,
   };
 }
 
@@ -26,6 +28,7 @@ export interface PostFrontmatter {
   createdAt: string;
   thumbnail?: string;
   draft?: boolean;
+  readingTime: string;
 }
 
 export interface Post {
@@ -61,9 +64,9 @@ export function getAllPosts(): PostMeta[] {
       const slug = file.replace(/\.mdx$/, "");
       const filePath = path.join(categoryPath, file);
       const fileContents = fs.readFileSync(filePath, "utf8");
-      const { data } = matter(fileContents);
+      const { data, content } = matter(fileContents);
 
-      const frontmatter = normalizeFrontmatter(data);
+      const frontmatter = normalizeFrontmatter(data, content);
 
       if (frontmatter.draft) continue;
 
@@ -105,7 +108,7 @@ export function getPost(category: string, slug: string): Post | null {
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContents);
 
-  const frontmatter = normalizeFrontmatter(data);
+  const frontmatter = normalizeFrontmatter(data, content);
 
   if (frontmatter.draft) {
     return null;
@@ -124,4 +127,31 @@ export function getAllPostPaths(): { category: string; slug: string }[] {
     category: post.category,
     slug: post.slug,
   }));
+}
+
+export function getAllTags(): string[] {
+  const posts = getAllPosts();
+  const tagSet = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.frontmatter.tags) {
+      tagSet.add(tag);
+    }
+  }
+  return Array.from(tagSet).sort();
+}
+
+export function getPostsByTag(tag: string): PostMeta[] {
+  return getAllPosts().filter((post) =>
+    post.frontmatter.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
+  );
+}
+
+export function searchPosts(query: string): PostMeta[] {
+  const lowerQuery = query.toLowerCase();
+  return getAllPosts().filter(
+    (post) =>
+      post.frontmatter.title.toLowerCase().includes(lowerQuery) ||
+      post.frontmatter.description.toLowerCase().includes(lowerQuery) ||
+      post.frontmatter.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
+  );
 }

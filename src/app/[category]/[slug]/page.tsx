@@ -4,6 +4,8 @@ import Image from "next/image";
 import { getAllPostPaths, getPost } from "@/lib/posts";
 import { compileMDXContent } from "@/lib/mdx";
 import { Badge } from "@/components/ui/badge";
+import { TableOfContents } from "@/components/toc";
+import { Clock } from "lucide-react";
 
 interface PostPageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -37,43 +39,53 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   const { content } = await compileMDXContent(post.content);
-  const { title, description, tags, createdAt, thumbnail } = post.frontmatter;
+  const { title, description, tags, createdAt, thumbnail, readingTime } = post.frontmatter;
 
   return (
-    <article className="container mx-auto px-4 py-8 max-w-3xl">
-      {thumbnail && (
-        <div className="relative aspect-video w-full mb-8 rounded-lg overflow-hidden">
-          <Image
-            src={thumbnail}
-            alt={title}
-            fill
-            className="object-cover"
-            priority
-          />
+    <>
+      <TableOfContents />
+      <article className="container mx-auto px-4 py-8 max-w-3xl">
+        {thumbnail && (
+          <div className="relative aspect-video w-full mb-8 rounded-lg overflow-hidden">
+            <Image
+              src={thumbnail}
+              alt={title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
+        <header className="mb-8">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+            <div className="flex items-center gap-2">
+              <Link href={`/${category}`} className="hover:underline">
+                <Badge variant="secondary">{category}</Badge>
+              </Link>
+            </div>
+            <span>•</span>
+            <time dateTime={createdAt}>{createdAt}</time>
+            <span>•</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{readingTime}</span>
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight mb-4">{title}</h1>
+          <p className="text-xl text-muted-foreground mb-4">{description}</p>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Badge key={tag} variant="outline">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </header>
+        <hr className="mb-8" />
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          {content}
         </div>
-      )}
-      <header className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-          <Link href={`/${category}`} className="hover:underline">
-            <Badge variant="secondary">{category}</Badge>
-          </Link>
-          <span>•</span>
-          <time dateTime={createdAt}>{createdAt}</time>
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight mb-4">{title}</h1>
-        <p className="text-xl text-muted-foreground mb-4">{description}</p>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </header>
-      <hr className="mb-8" />
-      <div className="prose prose-neutral dark:prose-invert max-w-none">
-        {content}
-      </div>
-    </article>
+      </article>
+    </>
   );
 }

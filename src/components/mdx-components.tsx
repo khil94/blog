@@ -3,18 +3,18 @@ import Link from "next/link";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    h1: ({ children }) => (
-      <h1 className="mt-8 mb-4 text-3xl font-bold tracking-tight">
+    h1: ({ children, ...props }) => (
+      <h1 className="mt-8 mb-4 text-3xl font-bold tracking-tight" {...props}>
         {children}
       </h1>
     ),
-    h2: ({ children }) => (
-      <h2 className="mt-8 mb-4 pb-4 text-2xl font-semibold tracking-tight border-b">
+    h2: ({ children, ...props }) => (
+      <h2 className="mt-8 mb-4 pb-4 text-2xl font-semibold tracking-tight border-b" {...props}>
         {children}
       </h2>
     ),
-    h3: ({ children }) => (
-      <h3 className="mt-6 mb-3 text-xl font-semibold">{children}</h3>
+    h3: ({ children, ...props }) => (
+      <h3 className="mt-6 mb-3 text-xl font-semibold" {...props}>{children}</h3>
     ),
     p: ({ children }) => (
       <p className="mb-4 leading-7 text-muted-foreground">{children}</p>
