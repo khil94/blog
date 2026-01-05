@@ -9,7 +9,7 @@ export function Header() {
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-bold text-xl">
-            Home
+            Hyoil.blog
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
             <Link

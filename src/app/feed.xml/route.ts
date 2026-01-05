@@ -3,7 +3,7 @@ import { Feed } from "feed";
 
 export async function GET() {
   const posts = getAllPosts();
-  const siteUrl = "https://example.com"; // 실제 도메인으로 변경 필요
+  const siteUrl = "https://www.hyoil.blog";
 
   const feed = new Feed({
     title: "김효일 개발 블로그",
