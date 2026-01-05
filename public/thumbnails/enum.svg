@@ -1,0 +1,6 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#3178c6"/>
+  <text x="600" y="280" font-family="monospace" font-size="60" fill="#ffffff" text-anchor="middle">enum Status {</text>
+  <text x="600" y="360" font-family="monospace" font-size="50" fill="#9cdcfe" text-anchor="middle">Active, Pending</text>
+  <text x="600" y="430" font-family="monospace" font-size="60" fill="#ffffff" text-anchor="middle">}</text>
+</svg>

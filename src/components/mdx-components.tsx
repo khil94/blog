@@ -1,5 +1,4 @@
 import type { MDXComponents } from "mdx/types";
-import Image from "next/image";
 import Link from "next/link";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -10,7 +9,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="mt-8 mb-4 text-2xl font-semibold tracking-tight border-b pb-2">
+      <h2 className="mt-8 mb-4 pb-4 text-2xl font-semibold tracking-tight border-b">
         {children}
       </h2>
     ),
@@ -56,15 +55,22 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </pre>
     ),
-    img: ({ src, alt }) => (
-      <Image
-        src={src ?? ""}
-        alt={alt ?? ""}
-        width={800}
-        height={400}
-        className="rounded-lg my-4"
-      />
-    ),
+    img: ({ src, alt }) => {
+      let imageSrc = src ?? "";
+      if (imageSrc.startsWith("public/")) {
+        imageSrc = "/" + imageSrc.slice(7);
+      }
+      if (!imageSrc.startsWith("/") && !imageSrc.startsWith("http")) {
+        imageSrc = "/" + imageSrc;
+      }
+      return (
+        <img
+          src={imageSrc}
+          alt={alt ?? ""}
+          className="rounded-lg my-4 max-w-full h-auto"
+        />
+      );
+    },
     table: ({ children }) => (
       <div className="mb-4 overflow-x-auto">
         <table className="w-full border-collapse border">{children}</table>

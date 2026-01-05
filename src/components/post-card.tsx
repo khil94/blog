@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { PostMeta } from "@/lib/posts";
@@ -9,11 +10,21 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const { slug, category, frontmatter } = post;
-  const { title, description, tags, createdAt } = frontmatter;
+  const { title, description, tags, createdAt, thumbnail } = frontmatter;
 
   return (
     <Link href={`/${category}/${slug}`}>
-      <Card className="h-full transition-colors hover:bg-muted/50">
+      <Card className="h-full transition-colors hover:bg-muted/50 overflow-hidden">
+        {thumbnail && (
+          <div className="relative aspect-video w-full">
+            <Image
+              src={thumbnail}
+              alt={title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
         <CardHeader>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <Badge variant="secondary">{category}</Badge>

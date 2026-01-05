@@ -1,5 +1,6 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
+import remarkGfm from "remark-gfm";
 import { useMDXComponents } from "@/components/mdx-components";
 import type { PostFrontmatter } from "./posts";
 
@@ -14,6 +15,7 @@ export async function compileMDXContent(source: string) {
     options: {
       parseFrontmatter: true,
       mdxOptions: {
+        remarkPlugins: [remarkGfm],
         rehypePlugins: [[rehypePrettyCode, rehypePrettyCodeOptions]],
       },
     },

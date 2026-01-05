@@ -3,6 +3,7 @@ import matter from "gray-matter";
 import path from "path";
 
 const postsDirectory = path.join(process.cwd(), "posts");
+const IGNORED_DIRECTORIES = [".obsidian", ".git", "node_modules"];
 
 function normalizeFrontmatter(data: Record<string, unknown>): PostFrontmatter {
   return {
@@ -45,6 +46,8 @@ export function getAllPosts(): PostMeta[] {
   const posts: PostMeta[] = [];
 
   for (const category of categories) {
+    if (IGNORED_DIRECTORIES.includes(category)) continue;
+
     const categoryPath = path.join(postsDirectory, category);
     const stat = fs.statSync(categoryPath);
 
@@ -86,6 +89,7 @@ export function getPostsByCategory(category: string): PostMeta[] {
 export function getAllCategories(): string[] {
   const categories = fs.readdirSync(postsDirectory);
   return categories.filter((category) => {
+    if (IGNORED_DIRECTORIES.includes(category)) return false;
     const categoryPath = path.join(postsDirectory, category);
     return fs.statSync(categoryPath).isDirectory();
   });
