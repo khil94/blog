@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getPost } from "@/lib/posts";
+import { SITE_CONFIG } from "@/constants";
 
 export const alt = "Blog Post";
 export const size = {
@@ -8,9 +9,13 @@ export const size = {
 };
 export const contentType = "image/png";
 
-export default async function Image({ params }: { params: { category: string; slug: string } }) {
+export default async function Image({
+  params,
+}: {
+  params: { category: string; slug: string };
+}) {
   const post = getPost(params.category, params.slug);
-  
+
   if (!post) {
     return new ImageResponse(
       (
@@ -59,14 +64,27 @@ export default async function Image({ params }: { params: { category: string; sl
             textAlign: "center",
           }}
         >
-          <div style={{ fontSize: 24, marginBottom: 20, color: "#888" }}>{post.category}</div>
-          <div style={{ fontSize: 60, fontWeight: "bold", marginBottom: 20, lineHeight: 1.2 }}>
+          <div style={{ fontSize: 24, marginBottom: 20, color: "#888" }}>
+            {post.category}
+          </div>
+          <div
+            style={{
+              fontSize: 60,
+              fontWeight: "bold",
+              marginBottom: 20,
+              lineHeight: 1.2,
+            }}
+          >
             {post.frontmatter.title}
           </div>
-          <div style={{ fontSize: 30, color: "#ccc" }}>{post.frontmatter.description}</div>
+          <div style={{ fontSize: 30, color: "#ccc" }}>
+            {post.frontmatter.description}
+          </div>
         </div>
-        <div style={{ position: "absolute", bottom: 40, fontSize: 24, color: "#666" }}>
-          Blog Name
+        <div
+          style={{ position: "absolute", bottom: 40, fontSize: 24, color: "#666" }}
+        >
+          {SITE_CONFIG.name}
         </div>
       </div>
     ),

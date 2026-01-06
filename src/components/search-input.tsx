@@ -12,7 +12,7 @@ export function SearchInput() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (query) {
-        router.push(`/search?q=${encodeURIComponent(query)}`);
+        router.push(`/blog/search?q=${encodeURIComponent(query)}`);
       }
     }, 300);
 

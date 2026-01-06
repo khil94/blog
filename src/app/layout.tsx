@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Header } from "@/components/header";
+import { SITE_CONFIG } from "@/constants";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description: "개발 블로그",
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
 };
 
 export default function RootLayout({
@@ -31,12 +31,11 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="min-h-screen">{children}</main>
+          {children}
         </ThemeProvider>
       </body>
     </html>

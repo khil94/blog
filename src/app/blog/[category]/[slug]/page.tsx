@@ -39,7 +39,8 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   const { content } = await compileMDXContent(post.content);
-  const { title, description, tags, createdAt, thumbnail, readingTime } = post.frontmatter;
+  const { title, description, tags, createdAt, thumbnail, readingTime } =
+    post.frontmatter;
 
   return (
     <>
@@ -59,7 +60,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <header className="mb-8">
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-2">
-              <Link href={`/${category}`} className="hover:underline">
+              <Link href={`/blog/${category}`} className="hover:underline">
                 <Badge variant="secondary">{category}</Badge>
               </Link>
             </div>
@@ -75,9 +76,9 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="text-xl text-muted-foreground mb-4">{description}</p>
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <Badge key={tag} variant="outline">
-                {tag}
-              </Badge>
+              <Link key={tag} href={`/blog/tags/${encodeURIComponent(tag)}`}>
+                <Badge variant="outline">{tag}</Badge>
+              </Link>
             ))}
           </div>
         </header>

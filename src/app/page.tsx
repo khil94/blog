@@ -1,20 +1,35 @@
-import { PostList } from "@/components/post-list";
 import { getAllPosts } from "@/lib/posts";
+import { Header } from "@/components/header";
+import {
+  HeroSection,
+  AboutSection,
+  ProjectsSection,
+  WritingSection,
+  ContactSection,
+} from "@/components/landing";
 
 export default function Home() {
-  const posts = getAllPosts();
+  const posts = getAllPosts().map((post) => ({
+    slug: post.slug,
+    category: post.category,
+    frontmatter: {
+      title: post.frontmatter.title,
+      description: post.frontmatter.description,
+      createdAt: post.frontmatter.createdAt,
+      tags: post.frontmatter.tags,
+    },
+  }));
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Hyoil.blog</h1>
-        <p className="text-lg text-muted-foreground">
-          개발 관련 글을 기록합니다. - 리뉴얼중...
-        </p>
-      </header>
-      <main>
-        <PostList posts={posts} />
+    <>
+      <Header variant="landing" />
+      <main className="bg-[#0a0a0a] text-white">
+        <HeroSection />
+        <AboutSection />
+        <ProjectsSection />
+        <WritingSection posts={posts} />
+        <ContactSection />
       </main>
-    </div>
+    </>
   );
 }
