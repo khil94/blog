@@ -303,9 +303,6 @@ export function ProjectsSection() {
           viewport={{ once: true }}
           className="flex items-baseline gap-4"
         >
-          <span className="brutal-label text-brutal-accent">
-            [Selected Works]
-          </span>
           <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter">
             Projects
           </h2>

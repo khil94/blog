@@ -55,7 +55,6 @@ export function AboutSection() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-          <span className="brutal-label text-muted-foreground">[01]</span>
           <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter">
             About
           </h2>
