@@ -1,9 +1,9 @@
 export const SITE_CONFIG = {
-  name: "Hyoil.dev",
+  name: "Hyoil.blog",
   title: "Hyoil | Frontend Developer",
   description:
     "인터랙티브 웹과 AI 통합에 관심이 많은 프론트엔드 개발자 김효일의 포트폴리오입니다.",
-  url: "https://your-domain.com",
+  url: "https://www.hyoil.blog",
   locale: "ko-KR",
   themeColor: {
     light: "#ffffff",

@@ -8,11 +8,10 @@ export const PROFILE = {
   bio: "인터랙티브 웹과 AI 통합에 관심이 많은 주니어 프론트엔드 개발자입니다.",
   location: "Seoul, South Korea",
   email: "khilkhil@naver.com",
-  avatar: "/images/avatar.png",
 } as const;
 
 export const SOCIAL_LINKS = {
-  github: "https://github.com/your-username",
+  github: "https://github.com/khil94",
   linkedin: "",
   twitter: "",
   instagram: "",
