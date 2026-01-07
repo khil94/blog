@@ -1,11 +1,12 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { getAllPostPaths, getPost } from "@/lib/posts";
-import { compileMDXContent } from "@/lib/mdx";
-import { Badge } from "@/components/ui/badge";
 import { TableOfContents } from "@/components/toc";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { compileMDXContent } from "@/lib/mdx";
+import { getAllPostPaths, getPost } from "@/lib/posts";
 import { Clock } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PostPageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -45,7 +46,7 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       <TableOfContents />
-      <article className="container mx-auto px-4 py-8 max-w-3xl">
+      <article className="container mx-auto px-4 py-20 max-w-3xl">
         {thumbnail && (
           <div className="relative aspect-video w-full mb-8 rounded-lg overflow-hidden">
             <Image
@@ -85,6 +86,11 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="mb-8" />
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           {content}
+        </div>
+        <div className="text-right">
+          <Link href={"/blog"}>
+            <Button>목록으로</Button>
+          </Link>
         </div>
       </article>
     </>
