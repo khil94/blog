@@ -1,89 +1,122 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown } from "lucide-react";
 import { PROFILE } from "@/constants";
+import { useRef } from "react";
 
 export function HeroSection() {
-  const words = PROFILE.tagline.split(" ");
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
     <section
+      ref={containerRef}
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center px-4"
+      className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden noise-overlay"
     >
-      <div className="text-center space-y-8">
-        <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {words.map((word, i) => (
-            <motion.span
-              key={i}
-              className="inline-block mr-4 last:mr-0"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: i * 0.15,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-            >
-              <span className="bg-gradient-to-r from-white via-white to-neutral-400 bg-clip-text text-transparent">
-                {word}
-              </span>
-            </motion.span>
-          ))}
-        </motion.h1>
+      <div className="absolute inset-0 grid grid-cols-6 pointer-events-none">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="border-r border-border/10 last:border-r-0" />
+        ))}
+      </div>
 
-        <motion.p
-          className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          {PROFILE.bio}
-        </motion.p>
-
-        <motion.div
-          className="flex items-center justify-center gap-4 pt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-        >
-          <a
-            href="#about"
-            className="px-6 py-3 bg-white text-black font-medium rounded-full hover:bg-neutral-200 transition-colors"
-          >
-            About Me
-          </a>
-          <a
-            href="#projects"
-            className="px-6 py-3 border border-neutral-700 text-white font-medium rounded-full hover:bg-neutral-800 transition-colors"
-          >
-            View Projects
-          </a>
-        </motion.div>
+      <div className="absolute top-8 left-8 brutal-label text-muted-foreground">
+        [{new Date().getFullYear()}]
+      </div>
+      <div className="absolute top-8 right-8 brutal-label text-muted-foreground">
+        SEOUL, KR
       </div>
 
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.5,
-          delay: 1,
-          repeat: Infinity,
-          repeatType: "reverse",
-          repeatDelay: 0.5,
-        }}
+        className="relative z-10 w-full max-w-7xl mx-auto"
+        style={{ y, opacity }}
       >
-        <a href="#about" className="text-neutral-500 hover:text-white transition-colors">
-          <ChevronDown className="w-8 h-8" />
-        </a>
+        <div className="overflow-hidden mb-4">
+          <motion.p
+            className="brutal-label text-brutal-accent tracking-[0.3em]"
+            initial={{ y: 40 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            FRONTEND DEVELOPER
+          </motion.p>
+        </div>
+
+        <div className="overflow-hidden">
+          <motion.h1
+            className="text-[clamp(3rem,15vw,12rem)] font-black leading-[0.85] tracking-tighter uppercase"
+            initial={{ y: 200 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="block text-stroke">{PROFILE.tagline.split(" ")[0]}</span>
+            <span className="block">{PROFILE.tagline.split(" ").slice(1).join(" ")}</span>
+          </motion.h1>
+        </div>
+
+        <motion.div
+          className="mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+        >
+          <p className="max-w-md text-lg text-muted-foreground border-l-4 border-foreground pl-4">
+            {PROFILE.bio}
+          </p>
+
+          <div className="flex gap-4">
+            <a
+              href="#about"
+              className="group px-8 py-4 bg-foreground text-background font-bold uppercase tracking-wider border-brutal shadow-brutal shadow-brutal-hover"
+            >
+              About Me
+            </a>
+            <a
+              href="#projects"
+              className="px-8 py-4 bg-background text-foreground font-bold uppercase tracking-wider border-brutal shadow-brutal shadow-brutal-hover"
+            >
+              Projects
+            </a>
+          </div>
+        </motion.div>
       </motion.div>
+
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden border-t-4 border-foreground bg-foreground text-background py-3">
+        <motion.div
+          className="flex whitespace-nowrap"
+          animate={{ x: [0, -1000] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          {Array.from({ length: 10 }).map((_, i) => (
+            <span key={i} className="brutal-label text-sm mx-8">
+              INTERACTIVE WEB • AI INTEGRATION • CREATIVE DEVELOPMENT • REACT • NEXT.JS • TYPESCRIPT •
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      <motion.a
+        href="#about"
+        className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors z-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <span className="brutal-label">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <ArrowDown className="w-6 h-6" strokeWidth={3} />
+        </motion.div>
+      </motion.a>
     </section>
   );
 }

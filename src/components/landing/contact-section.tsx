@@ -38,7 +38,7 @@ export function ContactSection() {
         </motion.h2>
 
         <motion.p
-          className="text-neutral-400 mb-12 max-w-md mx-auto"
+          className="text-muted-foreground mb-12 max-w-md mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -56,14 +56,14 @@ export function ContactSection() {
         >
           <button
             onClick={handleCopyEmail}
-            className="group flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 transition-all"
+            className="group flex items-center gap-3 px-6 py-4 rounded-xl bg-card/50 border border-border hover:border-foreground/30 transition-all"
           >
-            <Mail className="w-5 h-5 text-neutral-400" />
+            <Mail className="w-5 h-5 text-muted-foreground" />
             <span className="text-lg">{PROFILE.email}</span>
             {copied ? (
               <Check className="w-5 h-5 text-green-400" />
             ) : (
-              <Copy className="w-5 h-5 text-neutral-500 group-hover:text-white transition-colors" />
+              <Copy className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             )}
           </button>
 
@@ -78,7 +78,7 @@ export function ContactSection() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-full bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all"
+                    className="p-3 rounded-full bg-card/50 border border-border hover:border-foreground/30 hover:bg-card transition-all"
                   >
                     <Icon className="w-5 h-5" />
                   </a>
@@ -89,7 +89,7 @@ export function ContactSection() {
         </motion.div>
 
         <motion.div
-          className="mt-24 pt-8 border-t border-white/10 text-sm text-neutral-500"
+          className="mt-24 pt-8 border-t border-border text-sm text-muted-foreground"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

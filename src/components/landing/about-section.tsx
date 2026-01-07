@@ -4,12 +4,6 @@ import { motion } from "framer-motion";
 import { MapPin, Code2, Sparkles, Rocket } from "lucide-react";
 import { PROFILE, SKILLS } from "@/constants";
 
-const cardVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  hover: { scale: 1.02, transition: { duration: 0.2 } },
-};
-
 function BentoCard({
   children,
   className = "",
@@ -21,13 +15,11 @@ function BentoCard({
 }) {
   return (
     <motion.div
-      className={`relative p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-colors ${className}`}
-      variants={cardVariants}
-      initial="initial"
-      whileInView="animate"
-      whileHover="hover"
+      className={`relative p-6 bg-background border-brutal shadow-brutal shadow-brutal-hover ${className}`}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.4, delay }}
     >
       {children}
     </motion.div>
@@ -35,15 +27,15 @@ function BentoCard({
 }
 
 function SkillBadge({ name, level }: { name: string; level: string }) {
-  const levelColors = {
-    advanced: "bg-green-500/20 text-green-400 border-green-500/30",
-    intermediate: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    beginner: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  const levelStyles = {
+    advanced: "bg-foreground text-background",
+    intermediate: "bg-background text-foreground border-brutal-thick",
+    beginner: "bg-muted text-foreground border-2 border-dashed border-foreground",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-sm border ${levelColors[level as keyof typeof levelColors]}`}
+      className={`inline-flex items-center px-3 py-1 text-sm font-bold uppercase tracking-wide ${levelStyles[level as keyof typeof levelStyles]}`}
     >
       {name}
     </span>
@@ -52,42 +44,61 @@ function SkillBadge({ name, level }: { name: string; level: string }) {
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 px-4">
+    <section id="about" className="py-24 px-4 border-t-4 border-foreground">
       <div className="container mx-auto max-w-6xl">
-        <motion.h2
-          className="text-4xl md:text-5xl font-bold mb-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+        <motion.div
+          className="flex items-baseline gap-4 mb-16"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-          About Me
-        </motion.h2>
+          <span className="brutal-label text-muted-foreground">[01]</span>
+          <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter">
+            About
+          </h2>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <BentoCard className="md:col-span-2" delay={0.1}>
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-white/10">
-                <Code2 className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <BentoCard className="md:col-span-2 md:row-span-2" delay={0.1}>
+            <div className="h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-foreground text-background">
+                  <Code2 className="w-6 h-6" strokeWidth={3} />
+                </div>
+                <span className="brutal-label text-muted-foreground">WHO I AM</span>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">{PROFILE.role}</h3>
-                <p className="text-neutral-400 leading-relaxed">{PROFILE.bio}</p>
+              <h3 className="text-3xl font-black uppercase mb-4">{PROFILE.role}</h3>
+              <p className="text-muted-foreground leading-relaxed flex-1">{PROFILE.bio}</p>
+              <div className="mt-6 pt-6 border-t-2 border-dashed border-foreground/30">
+                <p className="brutal-label text-muted-foreground">
+                  Building interfaces that feel alive
+                </p>
               </div>
             </div>
           </BentoCard>
 
           <BentoCard delay={0.2}>
             <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-neutral-400" />
-              <span className="text-neutral-300">{PROFILE.location}</span>
+              <MapPin className="w-6 h-6" strokeWidth={3} />
+              <div>
+                <p className="brutal-label text-muted-foreground mb-1">Location</p>
+                <span className="font-bold uppercase">{PROFILE.location}</span>
+              </div>
             </div>
           </BentoCard>
 
-          <BentoCard delay={0.3}>
-            <div className="space-y-3">
+          <BentoCard delay={0.25}>
+            <div className="text-center">
+              <p className="text-5xl font-black">3+</p>
+              <p className="brutal-label text-muted-foreground mt-2">Years Coding</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard className="md:col-span-2" delay={0.3}>
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-green-400" />
-                <span className="font-medium">Primary Skills</span>
+                <Sparkles className="w-5 h-5" strokeWidth={3} />
+                <span className="font-bold uppercase">Primary Stack</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.primary.map((skill) => (
@@ -97,11 +108,11 @@ export function AboutSection() {
             </div>
           </BentoCard>
 
-          <BentoCard delay={0.4}>
-            <div className="space-y-3">
+          <BentoCard delay={0.35}>
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Code2 className="w-5 h-5 text-blue-400" />
-                <span className="font-medium">Secondary Skills</span>
+                <Code2 className="w-5 h-5" strokeWidth={3} />
+                <span className="font-bold uppercase">Tools</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.secondary.map((skill) => (
@@ -111,11 +122,11 @@ export function AboutSection() {
             </div>
           </BentoCard>
 
-          <BentoCard delay={0.5}>
-            <div className="space-y-3">
+          <BentoCard delay={0.4}>
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Rocket className="w-5 h-5 text-purple-400" />
-                <span className="font-medium">Exploring</span>
+                <Rocket className="w-5 h-5" strokeWidth={3} />
+                <span className="font-bold uppercase">Exploring</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.exploring.map((skill) => (

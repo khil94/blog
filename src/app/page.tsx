@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <>
       <Header variant="landing" />
-      <main className="bg-[#0a0a0a] text-white">
+      <main className="bg-background text-foreground">
         <HeroSection />
         <AboutSection />
         <ProjectsSection />

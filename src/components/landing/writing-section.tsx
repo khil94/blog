@@ -34,7 +34,7 @@ export function WritingSection({ posts }: WritingSectionProps) {
           <h2 className="text-4xl md:text-5xl font-bold">Writing</h2>
           <Link
             href="/blog"
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             View all
             <ArrowRight className="w-4 h-4" />
@@ -52,12 +52,12 @@ export function WritingSection({ posts }: WritingSectionProps) {
             >
               <Link
                 href={`/blog/${post.category}/${post.slug}`}
-                className="group block p-6 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all"
+                className="group block p-6 rounded-xl bg-card/50 border border-border hover:border-foreground/20 hover:bg-card transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-3 text-sm text-neutral-500">
-                      <span className="px-2 py-0.5 rounded bg-white/10 text-neutral-400">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground">
                         {post.category}
                       </span>
                       <div className="flex items-center gap-1">
@@ -65,14 +65,14 @@ export function WritingSection({ posts }: WritingSectionProps) {
                         {post.frontmatter.createdAt}
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold group-hover:text-white transition-colors">
+                    <h3 className="text-lg font-semibold group-hover:text-foreground transition-colors">
                       {post.frontmatter.title}
                     </h3>
-                    <p className="text-neutral-400 text-sm line-clamp-1">
+                    <p className="text-muted-foreground text-sm line-clamp-1">
                       {post.frontmatter.description}
                     </p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-neutral-600 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
                 </div>
               </Link>
             </motion.div>
