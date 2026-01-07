@@ -2,8 +2,11 @@ import { notFound } from "next/navigation";
 import { getAllCategories, getPostsByCategory } from "@/lib/posts";
 import { PostList } from "@/components/post-list";
 
+const POSTS_PER_PAGE = 9;
+
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export function generateStaticParams() {
@@ -19,26 +22,37 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { category } = await params;
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page || "1", 10) || 1);
+
   const categories = getAllCategories();
 
   if (!categories.includes(category)) {
     notFound();
   }
 
-  const posts = getPostsByCategory(category);
+  const allPosts = getPostsByCategory(category);
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = allPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">{category}</h1>
         <p className="text-lg text-muted-foreground">
-          {posts.length}개의 포스트
+          {allPosts.length}개의 포스트
         </p>
       </header>
       <main>
-        <PostList posts={posts} />
+        <PostList
+          posts={paginatedPosts}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
       </main>
     </div>
   );
