@@ -39,8 +39,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </blockquote>
     ),
-    code: ({ children, className }) => {
-      const isInlineCode = !className;
+    code: ({ children, className, style, ...props }) => {
+      const isInlineCode = !className && !props["data-theme"];
       if (isInlineCode) {
         return (
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">
@@ -48,10 +48,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
           </code>
         );
       }
-      return <code className={className}>{children}</code>;
+      return (
+        <code className={className} style={style} {...props}>
+          {children}
+        </code>
+      );
     },
-    pre: ({ children }) => (
-      <pre className="mb-4 break-all whitespace-break-spaces overflow-x-auto rounded-lg border bg-muted p-4">
+    pre: ({ children, style, ...props }) => (
+      <pre
+        className="mb-4 overflow-x-auto border-brutal bg-muted p-4"
+        style={style}
+        {...props}
+      >
         {children}
       </pre>
     ),

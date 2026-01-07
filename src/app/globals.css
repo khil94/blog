@@ -304,6 +304,52 @@
   }
 }
 
+/* Shiki dual theme - light mode default */
+[data-rehype-pretty-code-figure] code[data-theme*=" "],
+[data-rehype-pretty-code-figure] code[data-theme*=" "] span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+}
+
+/* Shiki dual theme - dark mode */
+.dark [data-rehype-pretty-code-figure] code[data-theme*=" "],
+.dark [data-rehype-pretty-code-figure] code[data-theme*=" "] span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* Code block styling */
+[data-rehype-pretty-code-figure] pre {
+  border-width: 3px;
+  border-color: var(--border);
+  background-color: var(--muted);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+[data-rehype-pretty-code-figure] code {
+  font-size: 0.875rem;
+  counter-reset: line;
+  background-color: transparent !important;
+}
+
+[data-rehype-pretty-code-figure] [data-line] {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-left-width: 2px;
+  border-left-color: transparent;
+}
+
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 2px;
+  border-left-color: var(--brutal-accent);
+}
+
+.dark [data-rehype-pretty-code-figure] [data-highlighted-line] {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Custom scrollbar - Brutalist */
 ::-webkit-scrollbar {
   width: 12px;

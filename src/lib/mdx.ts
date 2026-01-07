@@ -6,8 +6,11 @@ import { useMDXComponents } from "@/components/mdx-components";
 import type { PostFrontmatter } from "./posts";
 
 const rehypePrettyCodeOptions = {
-  theme: "github-dark",
-  keepBackground: true,
+  theme: {
+    dark: "github-dark",
+    light: "github-light",
+  },
+  keepBackground: false,
 };
 
 export async function compileMDXContent(source: string) {
