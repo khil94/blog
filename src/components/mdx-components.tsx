@@ -9,12 +9,17 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </h1>
     ),
     h2: ({ children, ...props }) => (
-      <h2 className="mt-8 mb-4 pb-4 text-2xl font-semibold tracking-tight border-b" {...props}>
+      <h2
+        className="mt-8 mb-4 pb-4 text-2xl font-semibold tracking-tight border-b"
+        {...props}
+      >
         {children}
       </h2>
     ),
     h3: ({ children, ...props }) => (
-      <h3 className="mt-6 mb-3 text-xl font-semibold" {...props}>{children}</h3>
+      <h3 className="mt-6 mb-3 text-xl font-semibold" {...props}>
+        {children}
+      </h3>
     ),
     p: ({ children }) => (
       <p className="mb-4 leading-7 text-muted-foreground">{children}</p>
@@ -35,7 +40,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     li: ({ children }) => <li className="text-muted-foreground">{children}</li>,
     blockquote: ({ children }) => (
-      <blockquote className="mt-4 mb-4 border-l-4 border-primary pl-4 italic text-muted-foreground">
+      <blockquote className="mt-4 mb-4 border-l-4 border-accent italic bg-muted p-4 text-muted-foreground [&_p]:mb-0">
         {children}
       </blockquote>
     ),
@@ -56,7 +61,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     },
     pre: ({ children, style, ...props }) => (
       <pre
-        className="mb-4 overflow-x-auto border-brutal bg-muted p-4"
+        className="mb-4 overflow-x-auto border-brutal whitespace-break-spaces break-keep bg-muted p-4"
         style={style}
         {...props}
       >
