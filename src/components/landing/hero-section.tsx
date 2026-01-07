@@ -1,8 +1,8 @@
 "use client";
 
+import { PROFILE } from "@/constants";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import { PROFILE } from "@/constants";
 import { useRef } from "react";
 
 export function HeroSection() {
@@ -27,28 +27,10 @@ export function HeroSection() {
         ))}
       </div>
 
-      <div className="absolute top-8 left-8 brutal-label text-muted-foreground">
-        [{new Date().getFullYear()}]
-      </div>
-      <div className="absolute top-8 right-8 brutal-label text-muted-foreground">
-        SEOUL, KR
-      </div>
-
       <motion.div
         className="relative z-10 w-full max-w-7xl mx-auto"
         style={{ y, opacity }}
       >
-        <div className="overflow-hidden mb-4">
-          <motion.p
-            className="brutal-label text-brutal-accent tracking-[0.3em]"
-            initial={{ y: 40 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            FRONTEND DEVELOPER
-          </motion.p>
-        </div>
-
         <div className="overflow-hidden">
           <motion.h1
             className="text-[clamp(3rem,15vw,12rem)] font-black leading-[0.85] tracking-tighter uppercase"
@@ -56,8 +38,12 @@ export function HeroSection() {
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="block text-stroke">{PROFILE.tagline.split(" ")[0]}</span>
-            <span className="block">{PROFILE.tagline.split(" ").slice(1).join(" ")}</span>
+            <span className="block text-stroke">
+              {PROFILE.tagline.split(" ")[0]}
+            </span>
+            <span className="block">
+              {PROFILE.tagline.split(" ").slice(1).join(" ")}
+            </span>
           </motion.h1>
         </div>
 
@@ -96,7 +82,8 @@ export function HeroSection() {
         >
           {Array.from({ length: 10 }).map((_, i) => (
             <span key={i} className="brutal-label text-sm mx-8">
-              INTERACTIVE WEB • AI INTEGRATION • CREATIVE DEVELOPMENT • REACT • NEXT.JS • TYPESCRIPT •
+              INTERACTIVE WEB • AI INTEGRATION • CREATIVE DEVELOPMENT • REACT •
+              NEXT.JS • TYPESCRIPT •
             </span>
           ))}
         </motion.div>
