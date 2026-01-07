@@ -6,10 +6,11 @@ import {
   motion,
   useMotionValue,
   useSpring,
+  PanInfo,
 } from "framer-motion";
-import { ArrowRight, ExternalLink, Github, X, ZoomIn } from "lucide-react";
+import { ArrowRight, ArrowLeft, ExternalLink, Github, X, ZoomIn } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 function ProjectModal({
   project,
@@ -22,7 +23,6 @@ function ProjectModal({
     null
   );
 
-  // Prevent background scrolling when modal is open
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -54,7 +54,6 @@ function ProjectModal({
         exit={{ scale: 0.9, opacity: 0, y: 50 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
-        {/* Modal Header */}
         <div className="sticky top-0 z-20 flex items-center justify-between p-4 md:p-6 border-b-4 border-foreground bg-background">
           <span className="brutal-label text-muted-foreground">
             Project Details // {project.year}
@@ -67,7 +66,6 @@ function ProjectModal({
           </button>
         </div>
 
-        {/* Hero Image */}
         <div className="relative w-full h-[40vh] md:h-[50vh] shrink-0 border-b-4 border-foreground overflow-hidden">
           <Image
             src={project.thumbnail}
@@ -83,10 +81,8 @@ function ProjectModal({
           </div>
         </div>
 
-        {/* Content */}
         <div className="flex-1 p-6 md:p-10">
           <div className="grid md:grid-cols-12 gap-10">
-            {/* Left Column: Description & Gallery */}
             <div className="md:col-span-8 space-y-10">
               <div className="space-y-4">
                 <h3 className="text-2xl font-black uppercase border-b-4 border-foreground inline-block pb-1">
@@ -125,7 +121,6 @@ function ProjectModal({
               )}
             </div>
 
-            {/* Right Column: Metadata & Links */}
             <div className="md:col-span-4 space-y-8 h-fit md:sticky md:top-6">
               <div className="p-6 border-brutal bg-muted/30">
                 <h4 className="font-bold uppercase text-sm text-muted-foreground mb-4">
@@ -172,7 +167,6 @@ function ProjectModal({
         </div>
       </motion.article>
 
-      {/* Lightbox for Screenshots */}
       <AnimatePresence>
         {selectedScreenshot && (
           <motion.div
@@ -215,56 +209,58 @@ function ProjectModal({
   );
 }
 
-function ProjectListItem({
+function ProjectCard({
   project,
-  index,
   onSelect,
   setHoveredProject,
 }: {
   project: Project;
-  index: number;
   onSelect: (project: Project) => void;
   setHoveredProject: (project: Project | null) => void;
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-      className="group relative border-b-4 border-foreground hover:bg-muted/50 transition-colors cursor-none"
+      className="group relative h-full flex flex-col bg-background border-4 border-foreground shadow-brutal hover:shadow-brutal-xl transition-all duration-300 cursor-none"
+      onClick={() => onSelect(project)}
       onMouseEnter={() => setHoveredProject(project)}
       onMouseLeave={() => setHoveredProject(null)}
-      onClick={() => onSelect(project)}
+      whileHover={{ y: -8 }}
     >
-      <div className="container mx-auto max-w-7xl px-4 py-12 md:py-16 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-baseline gap-6 md:gap-12">
-          <span className="text-xl md:text-2xl font-mono font-bold text-muted-foreground">
-            {(index + 1).toString().padStart(2, "0")}
-          </span>
-          <h3 className="text-4xl md:text-7xl font-black uppercase tracking-tighter group-hover:translate-x-4 transition-transform duration-300">
+      <div className="relative aspect-video w-full border-b-4 border-foreground overflow-hidden bg-muted">
+        <Image
+          src={project.thumbnail}
+          alt={project.title}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-foreground/10 group-hover:bg-transparent transition-colors" />
+      </div>
+
+      <div className="flex-1 p-6 flex flex-col justify-between gap-6">
+        <div>
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-sm font-bold font-mono text-muted-foreground">
+              {project.year}
+            </span>
+            <ArrowRight className="w-6 h-6 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+          </div>
+          <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-none mb-4 line-clamp-2">
             {project.title}
           </h3>
+          <p className="text-muted-foreground line-clamp-3 text-sm font-medium leading-relaxed">
+            {project.summary}
+          </p>
         </div>
 
-        <div className="flex items-center gap-4 md:gap-8 pl-12 md:pl-0">
-          <div className="hidden md:flex flex-wrap gap-2 justify-end max-w-xs">
-            {project.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="text-sm font-bold uppercase text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <span className="text-xl font-bold font-mono group-hover:text-brutal-accent transition-colors">
-            {project.year}
-          </span>
-          <ArrowRight
-            className="w-8 h-8 md:w-12 md:h-12 -rotate-45 group-hover:rotate-0 transition-transform duration-300"
-            strokeWidth={2}
-          />
+        <div className="flex flex-wrap gap-2">
+          {project.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-1 text-xs font-bold uppercase border-2 border-foreground bg-muted/30"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
     </motion.div>
@@ -275,6 +271,35 @@ export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
   const projects = getFeaturedProjects();
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1280) setItemsPerPage(3);
+      else if (window.innerWidth >= 768) setItemsPerPage(2);
+      else setItemsPerPage(1);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const maxIndex = Math.max(0, projects.length - itemsPerPage);
+
+  useEffect(() => {
+    if (currentIndex > maxIndex) setCurrentIndex(maxIndex);
+  }, [itemsPerPage, projects.length, currentIndex, maxIndex]);
+
+  const nextSlide = () => {
+    if (currentIndex < maxIndex) setCurrentIndex(currentIndex + 1);
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  };
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -291,34 +316,99 @@ export function ProjectsSection() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
 
+  const onDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    const threshold = 50;
+    if (info.offset.x < -threshold && currentIndex < maxIndex) {
+      nextSlide();
+    } else if (info.offset.x > threshold && currentIndex > 0) {
+      prevSlide();
+    }
+  };
+
   return (
     <section
       id="projects"
       className="relative py-24 bg-background overflow-hidden border-t-4 border-foreground"
     >
-      <div className="container mx-auto max-w-7xl px-4 mb-16">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="flex items-baseline gap-4"
-        >
-          <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter">
-            Projects
-          </h2>
-        </motion.div>
-      </div>
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col gap-4"
+          >
+            <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-none">
+              Projects
+            </h2>
+            <div className="flex items-center gap-4">
+              <span className="text-xl font-mono font-bold text-muted-foreground">
+                {String(currentIndex + 1).padStart(2, "0")} —{" "}
+                {String(projects.length).padStart(2, "0")}
+              </span>
+              <div className="h-2 w-32 bg-muted overflow-hidden border-2 border-muted-foreground/20">
+                <motion.div
+                  className="h-full bg-foreground"
+                  initial={{ width: 0 }}
+                  animate={{
+                    width: `${((currentIndex + 1) / (maxIndex + 1)) * 100}%`,
+                  }}
+                />
+              </div>
+            </div>
+          </motion.div>
 
-      <div className="border-t-4 border-foreground">
-        {projects.map((project, index) => (
-          <ProjectListItem
-            key={project.id}
-            project={project}
-            index={index}
-            onSelect={setSelectedProject}
-            setHoveredProject={setHoveredProject}
-          />
-        ))}
+          <div className="flex gap-4">
+            <button
+              onClick={prevSlide}
+              disabled={currentIndex === 0}
+              className="p-4 border-4 border-foreground disabled:opacity-30 disabled:cursor-not-allowed hover:bg-foreground hover:text-background transition-colors active:translate-y-1 shadow-brutal hover:shadow-none bg-background z-10"
+              aria-label="Previous project"
+            >
+              <ArrowLeft className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
+            </button>
+            <button
+              onClick={nextSlide}
+              disabled={currentIndex === maxIndex}
+              className="p-4 border-4 border-foreground disabled:opacity-30 disabled:cursor-not-allowed hover:bg-foreground hover:text-background transition-colors active:translate-y-1 shadow-brutal hover:shadow-none bg-background z-10"
+              aria-label="Next project"
+            >
+              <ArrowRight className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="relative overflow-hidden -mx-4 px-4 py-8"
+          ref={containerRef}
+        >
+          <motion.div
+            className="flex"
+            animate={{ x: `-${currentIndex * (100 / itemsPerPage)}%` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragEnd={onDragEnd}
+            dragMomentum={false}
+          >
+            {projects.map((project) => (
+              <motion.div
+                key={project.id}
+                className="shrink-0 w-full md:w-1/2 lg:w-1/3 p-3 md:p-4"
+              >
+                <ProjectCard
+                  project={project}
+                  onSelect={setSelectedProject}
+                  setHoveredProject={setHoveredProject}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
 
       <motion.div
