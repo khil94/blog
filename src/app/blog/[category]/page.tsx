@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getAllCategories, getPostsByCategory } from "@/lib/posts";
+import { getAllCategories, getAllPosts, getPostsByCategory } from "@/lib/posts";
+import { CategoryFilter } from "@/components/category-filter";
 import { PostList } from "@/components/post-list";
 
 const POSTS_PER_PAGE = 9;
@@ -34,19 +35,29 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   }
 
   const allPosts = getPostsByCategory(category);
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  const totalPosts = getAllPosts();
+  const postCounts: Record<string, number> = {};
+  for (const cat of categories) {
+    postCounts[cat] = getPostsByCategory(cat).length;
+  }
 
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const paginatedPosts = allPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <header className="mb-12">
+      <header className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight mb-4">{category}</h1>
         <p className="text-lg text-muted-foreground">
           {allPosts.length}개의 포스트
         </p>
       </header>
+      <CategoryFilter
+        categories={categories}
+        postCounts={postCounts}
+        totalCount={totalPosts.length}
+      />
       <main>
         <PostList
           posts={paginatedPosts}
