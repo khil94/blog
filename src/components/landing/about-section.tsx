@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { MapPin, Code2, Sparkles, Rocket } from "lucide-react";
 import { PROFILE, SKILLS } from "@/constants";
+import { motion } from "framer-motion";
+import { Code2, MapPin, Rocket, Sparkles } from "lucide-react";
 
 function BentoCard({
   children,
@@ -30,12 +30,15 @@ function SkillBadge({ name, level }: { name: string; level: string }) {
   const levelStyles = {
     advanced: "bg-foreground text-background",
     intermediate: "bg-background text-foreground border-brutal-thick",
-    beginner: "bg-muted text-foreground border-2 border-dashed border-foreground",
+    beginner:
+      "bg-muted text-foreground border-2 border-dashed border-foreground",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 text-sm font-bold uppercase tracking-wide ${levelStyles[level as keyof typeof levelStyles]}`}
+      className={`inline-flex items-center px-3 py-1 text-sm font-bold uppercase tracking-wide ${
+        levelStyles[level as keyof typeof levelStyles]
+      }`}
     >
       {name}
     </span>
@@ -65,10 +68,16 @@ export function AboutSection() {
                 <div className="p-3 bg-foreground text-background">
                   <Code2 className="w-6 h-6" strokeWidth={3} />
                 </div>
-                <span className="brutal-label text-muted-foreground">WHO I AM</span>
+                <span className="brutal-label text-muted-foreground">
+                  WHO I AM
+                </span>
               </div>
-              <h3 className="text-3xl font-black uppercase mb-4">{PROFILE.role}</h3>
-              <p className="text-muted-foreground leading-relaxed flex-1">{PROFILE.bio}</p>
+              <h3 className="text-3xl font-black uppercase mb-4">
+                {PROFILE.role}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed flex-1">
+                {PROFILE.bio}
+              </p>
               <div className="mt-6 pt-6 border-t-2 border-dashed border-foreground/30">
                 <p className="brutal-label text-muted-foreground">
                   Building interfaces that feel alive
@@ -81,7 +90,9 @@ export function AboutSection() {
             <div className="flex items-center gap-3">
               <MapPin className="w-6 h-6" strokeWidth={3} />
               <div>
-                <p className="brutal-label text-muted-foreground mb-1">Location</p>
+                <p className="brutal-label text-muted-foreground mb-1">
+                  Location
+                </p>
                 <span className="font-bold uppercase">{PROFILE.location}</span>
               </div>
             </div>
@@ -89,8 +100,10 @@ export function AboutSection() {
 
           <BentoCard delay={0.25}>
             <div className="text-center">
-              <p className="text-5xl font-black">3+</p>
-              <p className="brutal-label text-muted-foreground mt-2">Years Coding</p>
+              <p className="text-5xl font-black">1+</p>
+              <p className="brutal-label text-muted-foreground mt-2">
+                Years Coding
+              </p>
             </div>
           </BentoCard>
 
@@ -102,7 +115,11 @@ export function AboutSection() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.primary.map((skill) => (
-                  <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
+                  <SkillBadge
+                    key={skill.name}
+                    name={skill.name}
+                    level={skill.level}
+                  />
                 ))}
               </div>
             </div>
@@ -116,7 +133,11 @@ export function AboutSection() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.secondary.map((skill) => (
-                  <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
+                  <SkillBadge
+                    key={skill.name}
+                    name={skill.name}
+                    level={skill.level}
+                  />
                 ))}
               </div>
             </div>
@@ -126,11 +147,15 @@ export function AboutSection() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Rocket className="w-5 h-5" strokeWidth={3} />
-                <span className="font-bold uppercase">Exploring</span>
+                <span className="font-bold uppercase">Collaboration</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {SKILLS.exploring.map((skill) => (
-                  <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
+                {SKILLS.collaboration.map((skill) => (
+                  <SkillBadge
+                    key={skill.name}
+                    name={skill.name}
+                    level={skill.level}
+                  />
                 ))}
               </div>
             </div>

@@ -7,7 +7,7 @@ export const PROFILE = {
   tagline: "Creative Frontend Developer",
   bio: "인터랙티브 웹과 AI 통합에 관심이 많은 주니어 프론트엔드 개발자입니다.",
   location: "Seoul, South Korea",
-  email: "your-email@example.com",
+  email: "khilkhil@naver.com",
   avatar: "/images/avatar.png",
 } as const;
 
@@ -28,11 +28,15 @@ export const SKILLS = {
   secondary: [
     { name: "Zustand", level: "intermediate" },
     { name: "React Query", level: "intermediate" },
-    { name: "Framer Motion", level: "intermediate" },
-  ],
-  exploring: [
-    { name: "Three.js", level: "beginner" },
+    { name: "Axios", level: "intermediate" },
     { name: "AI/LLM Integration", level: "beginner" },
+  ],
+  collaboration: [
+    { name: "Git", level: "intermediate" },
+    { name: "Jira", level: "beginner" },
+    { name: "Notion", level: "intermediate" },
+    { name: "Slack", level: "intermediate" },
+    { name: "Figma", level: "beginner" },
   ],
 } as const;
 
