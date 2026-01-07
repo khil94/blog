@@ -53,7 +53,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
-          <p className="max-w-md text-lg text-muted-foreground border-l-4 border-foreground pl-4">
+          <p className="max-w-md break-keep text-lg text-muted-foreground border-l-4 border-foreground pl-4">
             {PROFILE.bio}
           </p>
 
