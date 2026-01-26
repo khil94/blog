@@ -1,12 +1,14 @@
-import { getAllPosts } from "@/lib/posts";
+import { CustomCursor } from "@/components/custom-cursor";
 import { Header } from "@/components/header";
 import {
-  HeroSection,
   AboutSection,
+  ContactSection,
+  HeroSection,
   ProjectsSection,
   WritingSection,
-  ContactSection,
 } from "@/components/landing";
+import { SmoothScroll } from "@/components/smooth-scroll";
+import { getAllPosts } from "@/lib/posts";
 
 export default function Home() {
   const posts = getAllPosts().map((post) => ({
@@ -21,7 +23,9 @@ export default function Home() {
   }));
 
   return (
-    <>
+    <div className="cursor-none">
+      <SmoothScroll />
+      <CustomCursor />
       <Header variant="landing" />
       <main className="bg-background text-foreground">
         <HeroSection />
@@ -30,6 +34,6 @@ export default function Home() {
         <WritingSection posts={posts} />
         <ContactSection />
       </main>
-    </>
+    </div>
   );
 }

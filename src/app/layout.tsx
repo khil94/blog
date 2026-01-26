@@ -1,5 +1,3 @@
-import { CustomCursor } from "@/components/custom-cursor";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SITE_CONFIG } from "@/constants";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -30,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased cursor-none`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -39,8 +37,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
-          <SmoothScroll />
-          <CustomCursor />
           {children}
         </ThemeProvider>
       </body>
