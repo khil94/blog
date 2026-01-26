@@ -1,3 +1,4 @@
+import Comments from "@/components/comments";
 import { TableOfContents } from "@/components/toc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -92,6 +93,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <Button>목록으로</Button>
           </Link>
         </div>
+        <Comments />
       </article>
     </>
   );
