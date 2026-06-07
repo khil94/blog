@@ -4,14 +4,19 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
-import { NAV_ITEMS, BLOG_NAV_ITEMS, SITE_CONFIG } from "@/constants";
+import { NAV_ITEMS, BLOG_NAV_ITEMS, VIBE_NAV_ITEMS, SITE_CONFIG } from "@/constants";
 
 interface HeaderProps {
-  variant?: "landing" | "blog";
+  variant?: "landing" | "blog" | "vibe";
 }
 
 export function Header({ variant = "landing" }: HeaderProps) {
-  const navItems = variant === "blog" ? BLOG_NAV_ITEMS : NAV_ITEMS;
+  const navItems =
+    variant === "blog"
+      ? BLOG_NAV_ITEMS
+      : variant === "vibe"
+        ? VIBE_NAV_ITEMS
+        : NAV_ITEMS;
   const showSearch = variant === "blog";
 
   return (

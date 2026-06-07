@@ -5,6 +5,7 @@ import {
   ContactSection,
   HeroSection,
   ProjectsSection,
+  VibeCodingSection,
   WritingSection,
 } from "@/components/landing";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -31,6 +32,7 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <ProjectsSection />
+        <VibeCodingSection />
         <WritingSection posts={posts} />
         <ContactSection />
       </main>

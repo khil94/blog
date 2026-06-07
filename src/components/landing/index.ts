@@ -2,4 +2,5 @@ export { HeroSection } from "./hero-section";
 export { AboutSection } from "./about-section";
 export { ProjectsSection } from "./projects-section";
 export { WritingSection } from "./writing-section";
+export { VibeCodingSection } from "./vibe-coding-section";
 export { ContactSection } from "./contact-section";

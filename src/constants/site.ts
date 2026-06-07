@@ -14,6 +14,7 @@ export const SITE_CONFIG = {
 export const NAV_ITEMS = [
   { label: "About", href: "/#about" },
   { label: "Projects", href: "/#projects" },
+  { label: "Vibe", href: "/vibe" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/#contact" },
 ] as const;
@@ -22,4 +23,10 @@ export const BLOG_NAV_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
   { label: "Tags", href: "/blog/tags" },
+] as const;
+
+export const VIBE_NAV_ITEMS = [
+  { label: "Home", href: "/" },
+  { label: "Exhibition", href: "/vibe" },
+  { label: "Blog", href: "/blog" },
 ] as const;
