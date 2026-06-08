@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/React/CascadingRenders.mdx",
+                "file": "posts/typescript/UnknownVersusAny.mdx",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CascadingRenders"
+              "title": "UnknownVersusAny"
             }
           }
         ]
@@ -44,7 +44,7 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "Files"
+              "title": "파일 탐색기"
             }
           },
           {
@@ -171,13 +171,13 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "bases:Create new base": false,
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false,
       "obsidian-git:Open Git source control": false,
       "templater-obsidian:Templater": false,
       "edit-mdx:New .mdx file": false
@@ -185,11 +185,16 @@
   },
   "active": "6271752be333c9f0",
   "lastOpenFiles": [
-    "posts/React/ReactServerComponent.mdx",
-    "posts/React/CascadingRenders.mdx",
-    "posts/React/useTransition.mdx",
-    "templates/TIL Template.mdx",
-    "templates/Blot Post Template.mdx",
-    "templates"
+    "posts/typescript/Enum.mdx",
+    "posts/typescript/UnknownVersusAny.mdx",
+    "posts/typescript/CouldNotFindModule.mdx",
+    "posts/TIL/TIL-IsomorphicHooks.mdx",
+    "posts/css/whenStickyDoesntWork.mdx",
+    "posts/etc/quickZustand.mdx",
+    "posts/etc/tailwind4Custom.mdx",
+    "posts/javascript/Number.mdx",
+    "posts/javascript/NoteForDateToISOString.mdx",
+    "posts/javascript/EsmAndCommonJS.mdx",
+    "posts/log/TailwindCSSContentError.mdx"
   ]
 }
