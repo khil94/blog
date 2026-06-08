@@ -45,54 +45,38 @@ export default function VibePage() {
   );
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
-  // Scroll Lock when Modal is Active
+  // Scroll Lock
   useEffect(() => {
-    const isModalOpen = activeImageIndex !== null;
-    if (!isModalOpen) return;
-
+    if (activeImageIndex === null) return;
     const scrollY = window.scrollY;
-    const originalStyle = window.getComputedStyle(document.body);
-    const originalPosition = originalStyle.position;
-    const originalTop = originalStyle.top;
-    const originalWidth = originalStyle.width;
-    const originalOverflow = originalStyle.overflowY;
-
-    // Absolute bulletproof scroll lock that prevents background scrolling without jumping
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
-    document.body.style.overflowY = "scroll";
-
+    document.body.style.overflowY = "hidden";
     return () => {
-      document.body.style.position = originalPosition;
-      document.body.style.top = originalTop;
-      document.body.style.width = originalWidth;
-      document.body.style.overflowY = originalOverflow;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
       window.scrollTo(0, scrollY);
     };
   }, [activeImageIndex !== null]);
 
   return (
     <main className="bg-background text-foreground">
-      {/* ===== HERO SECTION ===== */}
+      {/* ===== HERO ===== */}
       <section className="relative min-h-[50vh] flex flex-col items-center justify-center border-b-4 border-foreground noise-overlay">
         <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center">
           <span className="brutal-label text-brutal-accent flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             AI × Creative Coding
           </span>
-
-          <h1
-            className="glitch text-6xl sm:text-8xl md:text-9xl font-black uppercase tracking-tighter leading-none"
-            data-text="VIBE CODING"
-          >
+          <h1 className="glitch text-6xl sm:text-8xl md:text-9xl font-black uppercase tracking-tighter leading-none" data-text="VIBE CODING">
             VIBE CODING
           </h1>
-
           <p className="text-lg sm:text-xl font-mono uppercase tracking-widest text-muted-foreground">
             AI × Creative Coding Exhibition
           </p>
-
           <div className="flex items-center gap-4 mt-4">
             <span className="brutal-label border-brutal px-3 py-1 flex items-center gap-2">
               <Bot className="h-4 w-4" />
@@ -100,77 +84,29 @@ export default function VibePage() {
             </span>
           </div>
         </div>
-
-        {/* Scroll down arrow */}
-        <motion.div
-          className="absolute bottom-8 z-10"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-        >
+        <motion.div className="absolute bottom-8 z-10" animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}>
           <ArrowDown className="h-8 w-8 text-muted-foreground" />
         </motion.div>
       </section>
 
       {/* ===== SPLIT PANE ===== */}
       <div className="flex flex-col md:flex-row">
-        {/* LEFT PANEL — Project List */}
-        <aside
-          className={`w-full md:w-[35%] md:sticky md:top-14 md:h-[calc(100vh-3.5rem)] border-b-4 md:border-b-0 md:border-r-4 border-foreground bg-background ${
-            activeImageIndex !== null ? "overflow-hidden" : "overflow-y-auto"
-          }`}
-        >
+        <aside className={`w-full md:w-[35%] md:sticky md:top-14 md:h-[calc(100vh-3.5rem)] border-b-4 md:border-b-0 md:border-r-4 border-foreground bg-background ${activeImageIndex !== null ? "overflow-hidden" : "overflow-y-auto"}`}>
           <div className="border-b-4 border-foreground px-4 py-3">
-            <span className="brutal-label text-muted-foreground">
-              전시 목록
-            </span>
+            <span className="brutal-label text-muted-foreground">전시 목록</span>
           </div>
-
           <ul>
             {projects.map((project) => {
               const isSelected = selectedProject.id === project.id;
               return (
                 <li key={project.id}>
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    className={`w-full text-left px-4 py-4 border-b border-foreground/20 transition-colors duration-100 cursor-pointer ${
-                      isSelected
-                        ? "bg-foreground text-background"
-                        : "hover:bg-muted"
-                    }`}
-                  >
+                  <button onClick={() => setSelectedProject(project)} className={`w-full text-left px-4 py-4 border-b border-foreground/20 transition-colors duration-100 cursor-pointer ${isSelected ? "bg-foreground text-background" : "hover:bg-muted"}`}>
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span
-                        className={`brutal-label ${
-                          isSelected
-                            ? "text-background/70"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {formatExhibitNumber(project.exhibitNumber)}
-                      </span>
-                      <span
-                        className={`brutal-label px-2 py-0.5 text-[0.625rem] ${
-                          isSelected
-                            ? "bg-background text-foreground"
-                            : getAiToolStyle(project.aiTool)
-                        }`}
-                      >
-                        {project.aiTool}
-                      </span>
+                      <span className={`brutal-label ${isSelected ? "text-background/70" : "text-muted-foreground"}`}>{formatExhibitNumber(project.exhibitNumber)}</span>
+                      <span className={`brutal-label px-2 py-0.5 text-[0.625rem] ${isSelected ? "bg-background text-foreground" : getAiToolStyle(project.aiTool)}`}>{project.aiTool}</span>
                     </div>
-
-                    <h3 className="font-black uppercase tracking-tight text-sm leading-tight">
-                      {project.title}
-                    </h3>
-                    <p
-                      className={`text-xs mt-1 ${
-                        isSelected
-                          ? "text-background/60"
-                          : "text-muted-foreground"
-                      }`}
-                    >
-                      {project.subtitle}
-                    </p>
+                    <h3 className="font-black uppercase tracking-tight text-sm leading-tight">{project.title}</h3>
+                    <p className={`text-xs mt-1 ${isSelected ? "text-background/60" : "text-muted-foreground"}`}>{project.subtitle}</p>
                   </button>
                 </li>
               );
@@ -178,434 +114,312 @@ export default function VibePage() {
           </ul>
         </aside>
 
-        {/* RIGHT PANEL — Project Detail */}
         <section className="w-full md:w-[65%] min-h-[calc(100vh-3.5rem)] overflow-hidden">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedProject.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="p-6 sm:p-8 md:p-12"
-            >
-              {/* Exhibit header */}
+            <motion.div key={selectedProject.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2, ease: "easeOut" }} className="p-6 sm:p-8 md:p-12">
               <div className="mb-8">
-                <span className="brutal-label text-brutal-accent text-lg">
-                  {formatExhibitNumber(selectedProject.exhibitNumber)}
-                </span>
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none mt-2">
-                  {selectedProject.title}
-                </h2>
-                <p className="text-lg text-muted-foreground mt-2 font-mono">
-                  {selectedProject.subtitle}
-                </p>
+                <span className="brutal-label text-brutal-accent text-lg">{formatExhibitNumber(selectedProject.exhibitNumber)}</span>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none mt-2">{selectedProject.title}</h2>
+                <p className="text-lg text-muted-foreground mt-2 font-mono">{selectedProject.subtitle}</p>
               </div>
 
-              {/* V-Shape Layered Screenshots */}
               {(() => {
                 const img1 = selectedProject.thumbnail;
-                const img2 =
-                  selectedProject.screenshots.find((s) => s !== img1) ||
-                  selectedProject.screenshots[0] ||
-                  img1;
-
+                const img2 = selectedProject.screenshots.find((s) => s !== img1) || selectedProject.screenshots[0] || img1;
                 const img1Index = selectedProject.screenshots.indexOf(img1);
                 const img2Index = selectedProject.screenshots.indexOf(img2);
                 const idx1 = img1Index !== -1 ? img1Index : 0;
-                const idx2 =
-                  img2Index !== -1
-                    ? img2Index
-                    : selectedProject.screenshots.length > 1
-                    ? 1
-                    : 0;
+                const idx2 = img2Index !== -1 ? img2Index : (selectedProject.screenshots.length > 1 ? 1 : 0);
 
                 return selectedProject.platform === "web" ? (
                   <div className="flex justify-center items-center py-6 mb-8 overflow-visible">
                     <div className="relative w-full max-w-[620px] h-[320px] sm:h-[360px] flex items-center justify-center">
-                      {/* Back Screenshot (Right) */}
-                      <motion.div
-                        className="absolute aspect-video w-[290px] sm:w-[330px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden cursor-pointer"
-                        style={{
-                          right: "5%",
-                          top: "10%",
-                          zIndex: 10,
-                        }}
-                        initial={{ rotate: 5, x: 10, y: 10, opacity: 0.85 }}
-                        whileHover={{
-                          rotate: 1,
-                          x: 25,
-                          y: -10,
-                          opacity: 1,
-                          scale: 1.05,
-                        }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 260,
-                          damping: 20,
-                        }}
-                        onClick={() => setActiveImageIndex(idx2)}
-                      >
-                        <Image
-                          src={img2}
-                          alt={`${selectedProject.title} screenshot back`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 290px, 330px"
-                        />
+                      <motion.div className="absolute aspect-video w-[290px] sm:w-[330px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden cursor-pointer" style={{ right: "5%", top: "10%", zIndex: 10 }} initial={{ rotate: 5, x: 10, y: 10, opacity: 0.85 }} whileHover={{ rotate: 1, x: 25, y: -10, opacity: 1, scale: 1.05 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} onClick={() => setActiveImageIndex(idx2)}>
+                        <Image src={img2} alt="back" fill className="object-cover" sizes="330px" />
                       </motion.div>
-
-                      {/* Front Screenshot (Left) */}
-                      <motion.div
-                        className="absolute aspect-video w-[340px] sm:w-[390px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden z-20 cursor-pointer"
-                        style={{
-                          left: "5%",
-                          bottom: "5%",
-                        }}
-                        initial={{ rotate: -3, x: -10, y: 0 }}
-                        whileHover={{ rotate: 0, x: -25, y: -15, scale: 1.05 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 260,
-                          damping: 20,
-                        }}
-                        onClick={() => setActiveImageIndex(idx1)}
-                      >
-                        <Image
-                          src={img1}
-                          alt={`${selectedProject.title} screenshot front`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 340px, 390px"
-                        />
+                      <motion.div className="absolute aspect-video w-[340px] sm:w-[390px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden z-20 cursor-pointer" style={{ left: "5%", bottom: "5%" }} initial={{ rotate: -3, x: -10, y: 0 }} whileHover={{ rotate: 0, x: -25, y: -15, scale: 1.05 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} onClick={() => setActiveImageIndex(idx1)}>
+                        <Image src={img1} alt="front" fill className="object-cover" sizes="390px" />
                       </motion.div>
                     </div>
                   </div>
                 ) : (
                   <div className="flex justify-center items-center py-6 mb-8 overflow-visible">
                     <div className="relative w-full max-w-[380px] h-[480px] sm:h-[540px] flex items-center justify-center">
-                      {/* Back Screenshot (Right) */}
-                      <motion.div
-                        className="absolute aspect-[9/19] w-[180px] sm:w-[200px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden cursor-pointer"
-                        style={{
-                          right: "10%",
-                          zIndex: 10,
-                          transformOrigin: "bottom center",
-                        }}
-                        initial={{ rotate: 10, x: 15, y: 15, opacity: 0.85 }}
-                        whileHover={{
-                          rotate: 4,
-                          x: 30,
-                          y: -10,
-                          opacity: 1,
-                          scale: 1.05,
-                        }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 260,
-                          damping: 20,
-                        }}
-                        onClick={() => setActiveImageIndex(idx2)}
-                      >
-                        <Image
-                          src={img2}
-                          alt={`${selectedProject.title} screenshot back`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 180px, 200px"
-                        />
+                      <motion.div className="absolute aspect-[9/19] w-[180px] sm:w-[200px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden cursor-pointer" style={{ right: "10%", zIndex: 10, transformOrigin: "bottom center" }} initial={{ rotate: 10, x: 15, y: 15, opacity: 0.85 }} whileHover={{ rotate: 4, x: 30, y: -10, opacity: 1, scale: 1.05 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} onClick={() => setActiveImageIndex(idx2)}>
+                        <Image src={img2} alt="back" fill className="object-cover" sizes="200px" />
                       </motion.div>
-
-                      {/* Front Screenshot (Left) */}
-                      <motion.div
-                        className="absolute aspect-[9/19] w-[210px] sm:w-[230px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden z-20 cursor-pointer"
-                        style={{
-                          left: "10%",
-                          transformOrigin: "bottom center",
-                        }}
-                        initial={{ rotate: -8, x: -15, y: 0 }}
-                        whileHover={{ rotate: -2, x: -30, y: -20, scale: 1.05 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 260,
-                          damping: 20,
-                        }}
-                        onClick={() => setActiveImageIndex(idx1)}
-                      >
-                        <Image
-                          src={img1}
-                          alt={`${selectedProject.title} screenshot front`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 210px, 230px"
-                        />
+                      <motion.div className="absolute aspect-[9/19] w-[210px] sm:w-[230px] border-4 border-foreground shadow-brutal bg-muted overflow-hidden z-20 cursor-pointer" style={{ left: "10%", transformOrigin: "bottom center" }} initial={{ rotate: -8, x: -15, y: 0 }} whileHover={{ rotate: -2, x: -30, y: -20, scale: 1.05 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} onClick={() => setActiveImageIndex(idx1)}>
+                        <Image src={img1} alt="front" fill className="object-cover" sizes="230px" />
                       </motion.div>
                     </div>
                   </div>
                 );
               })()}
 
-              {/* Description */}
               <div className="mb-8">
-                <span className="brutal-label text-muted-foreground block mb-3">
-                  설명
-                </span>
-                <p className="text-base sm:text-lg leading-relaxed max-w-2xl">
-                  {selectedProject.description}
-                </p>
+                <span className="brutal-label text-muted-foreground block mb-3">설명</span>
+                <p className="text-base sm:text-lg leading-relaxed max-w-2xl">{selectedProject.description}</p>
               </div>
-
-              {/* Tags */}
               <div className="mb-8">
-                <span className="brutal-label text-muted-foreground block mb-3">
-                  기술 스택
-                </span>
+                <span className="brutal-label text-muted-foreground block mb-3">기술 스택</span>
                 <div className="flex flex-wrap gap-2">
-                  {selectedProject.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="brutal-label border-brutal px-3 py-1 text-xs"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  {selectedProject.tags.map((tag) => (<span key={tag} className="brutal-label border-brutal px-3 py-1 text-xs">{tag}</span>))}
                 </div>
               </div>
-
-              {/* Screenshots Gallery */}
               {selectedProject.screenshots.length > 1 && (
                 <div className="mb-8">
-                  <span className="brutal-label text-muted-foreground block mb-3">
-                    스크린샷
-                  </span>
+                  <span className="brutal-label text-muted-foreground block mb-3">스크린샷</span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {selectedProject.screenshots.map((src, i) => (
-                      <div
-                        key={i}
-                        className="relative aspect-[9/16] border-2 border-foreground overflow-hidden group cursor-pointer bg-muted"
-                        onClick={() => setActiveImageIndex(i)}
-                      >
-                        <Image
-                          src={src}
-                          alt={`${selectedProject.title} screenshot ${i + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="200px"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <ZoomIn className="w-6 h-6 text-white" />
-                        </div>
+                      <div key={i} className="relative aspect-[9/16] border-2 border-foreground overflow-hidden group cursor-pointer bg-muted" onClick={() => setActiveImageIndex(i)}>
+                        <Image src={src} alt={`screenshot ${i + 1}`} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="200px" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><ZoomIn className="w-6 h-6 text-white" /></div>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* Action buttons */}
               <div className="flex flex-wrap gap-4 mb-8">
-                {selectedProject.demoUrl && (
-                  <a
-                    href={selectedProject.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-black uppercase tracking-wider text-sm border-4 border-foreground shadow-brutal shadow-brutal-hover"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    데모 보기
-                  </a>
-                )}
-                {selectedProject.githubUrl && (
-                  <a
-                    href={selectedProject.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-background text-foreground px-6 py-3 font-black uppercase tracking-wider text-sm border-4 border-foreground shadow-brutal shadow-brutal-hover"
-                  >
-                    <Github className="h-4 w-4" />
-                    GitHub
-                  </a>
-                )}
+                {selectedProject.demoUrl && (<a href={selectedProject.demoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 font-black uppercase tracking-wider text-sm border-4 border-foreground shadow-brutal shadow-brutal-hover"><ExternalLink className="h-4 w-4" />데모 보기</a>)}
+                {selectedProject.githubUrl && (<a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-background text-foreground px-6 py-3 font-black uppercase tracking-wider text-sm border-4 border-foreground shadow-brutal shadow-brutal-hover"><Github className="h-4 w-4" />GitHub</a>)}
               </div>
-
-              {/* Meta info */}
               <div className="flex flex-wrap items-center gap-4 border-t-4 border-foreground pt-6">
-                <div className="flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-muted-foreground" />
-                  <span
-                    className={`brutal-label px-2 py-0.5 ${getAiToolStyle(
-                      selectedProject.aiTool
-                    )}`}
-                  >
-                    {selectedProject.aiTool}
-                  </span>
-                </div>
-                <span className="brutal-label text-muted-foreground">
-                  {selectedProject.createdAt}
-                </span>
-                <div className="flex items-center gap-1">
-                  {selectedProject.platform === "web" ? (
-                    <Monitor className="h-3.5 w-3.5 text-muted-foreground" />
-                  ) : (
-                    <Smartphone className="h-3.5 w-3.5 text-muted-foreground" />
-                  )}
-                  <span className="brutal-label text-muted-foreground">
-                    {selectedProject.platform}
-                  </span>
-                </div>
+                <div className="flex items-center gap-2"><Bot className="h-4 w-4 text-muted-foreground" /><span className={`brutal-label px-2 py-0.5 ${getAiToolStyle(selectedProject.aiTool)}`}>{selectedProject.aiTool}</span></div>
+                <span className="brutal-label text-muted-foreground">{selectedProject.createdAt}</span>
+                <div className="flex items-center gap-1">{selectedProject.platform === "web" ? <Monitor className="h-3.5 w-3.5 text-muted-foreground" /> : <Smartphone className="h-3.5 w-3.5 text-muted-foreground" />}<span className="brutal-label text-muted-foreground">{selectedProject.platform}</span></div>
               </div>
             </motion.div>
           </AnimatePresence>
         </section>
       </div>
 
-      {/* Image Modal */}
-      <AnimatePresence>
-        {activeImageIndex !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActiveImageIndex(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4 md:p-8 cursor-zoom-out"
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 15 }}
-              transition={{ type: "spring", duration: 0.3 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative bg-background border-4 border-foreground shadow-brutal flex flex-col md:flex-row cursor-default w-full max-w-5xl h-[85vh] md:h-[75vh] overflow-hidden"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setActiveImageIndex(null)}
-                className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-brutal-accent hover:bg-brutal-accent/80 text-background p-2 border-4 border-foreground shadow-brutal-sm cursor-pointer transition-transform active:scale-95 z-50 flex items-center justify-center"
-                aria-label="Close modal"
-              >
-                <X className="h-5 w-5 stroke-[3]" />
-              </button>
-
-              {/* Main Viewer Area (Left/Center) */}
-              <div className="flex-1 relative bg-black/40 flex items-center justify-center p-4 md:p-8 h-[calc(100%-140px)] md:h-full border-b-4 md:border-b-0 md:border-r-4 border-foreground">
-                {/* Previous Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveImageIndex((prev) =>
-                      prev !== null && prev > 0
-                        ? prev - 1
-                        : selectedProject.screenshots.length - 1
-                    );
-                  }}
-                  className="absolute left-4 z-30 bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer transition-transform active:scale-95 flex items-center justify-center"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-6 w-6 stroke-[3]" />
-                </button>
-
-                {/* Image Display */}
-                <div className="relative w-full h-full">
-                  <Image
-                    src={selectedProject.screenshots[activeImageIndex]}
-                    alt={`${selectedProject.title} screenshot ${
-                      activeImageIndex + 1
-                    }`}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 100vw, 70vw"
-                    priority
-                  />
-                </div>
-
-                {/* Next Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveImageIndex((prev) =>
-                      prev !== null &&
-                      prev < selectedProject.screenshots.length - 1
-                        ? prev + 1
-                        : 0
-                    );
-                  }}
-                  className="absolute right-4 z-30 bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer transition-transform active:scale-95 flex items-center justify-center"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-6 w-6 stroke-[3]" />
-                </button>
-
-                {/* Image counter indicator */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background border-2 border-foreground px-3 py-1 font-mono text-xs font-bold shadow-brutal-sm">
-                  {activeImageIndex + 1} / {selectedProject.screenshots.length}
-                </div>
-              </div>
-
-              {/* Sidebar Playlist Area (Right/Bottom) */}
-              <div
-                className="w-full md:w-[280px] h-[140px] md:h-full bg-background shrink-0 border-t-4 md:border-t-0 md:border-l-4 border-foreground"
-                style={{ display: "grid", gridTemplateRows: "max-content 1fr" }}
-              >
-                <div className="hidden md:block border-b-4 border-foreground p-3 bg-muted font-black text-xs uppercase tracking-wider text-muted-foreground">
-                  SCREENSHOTS ({selectedProject.screenshots.length})
-                </div>
-
-                {/* Playlist Grid */}
-                <div
-                  className="overflow-x-auto overflow-y-hidden md:overflow-x-hidden md:overflow-y-scroll bg-background p-3"
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <div className="flex flex-row md:flex-col gap-3 md:gap-4 w-max md:w-full">
-                    {selectedProject.screenshots.map((src, i) => {
-                      const isActive = i === activeImageIndex;
-                      return (
-                        <div key={i} className="shrink-0 w-[140px] md:w-full">
-                          <button
-                            onClick={() => setActiveImageIndex(i)}
-                            className={`relative block w-full border-2 transition-all ${
-                              isActive
-                                ? "border-brutal-accent ring-2 ring-brutal-accent scale-95"
-                                : "border-foreground/40 hover:border-foreground"
-                            } overflow-hidden cursor-pointer ${
-                              selectedProject.platform === "web"
-                                ? "aspect-video"
-                                : "aspect-[9/16] md:w-[140px] md:mx-auto"
-                            }`}
-                          >
-                            <Image
-                              src={src}
-                              alt={`Thumbnail ${i + 1}`}
-                              fill
-                              className="object-cover"
-                              sizes="140px"
-                            />
-                            <div
-                              className={`absolute inset-0 transition-colors flex items-center justify-center ${
-                                isActive
-                                  ? "bg-brutal-accent/10"
-                                  : "bg-black/0 hover:bg-black/10"
-                              }`}
-                            >
-                              <span
-                                className={`font-mono text-xs font-black px-1.5 py-0.5 border border-foreground shadow-brutal-sm ${
-                                  isActive
-                                    ? "bg-brutal-accent text-background"
-                                    : "bg-background text-foreground"
-                                }`}
-                              >
-                                #{i + 1}
-                              </span>
-                            </div>
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ===== IMAGE MODAL ===== */}
+      {activeImageIndex !== null && (
+        <ScreenshotModal
+          project={selectedProject}
+          activeIndex={activeImageIndex}
+          onChangeIndex={setActiveImageIndex}
+          onClose={() => setActiveImageIndex(null)}
+        />
+      )}
     </main>
+  );
+}
+
+/* ======================================================================
+   Separate component so we can test and debug it in isolation.
+   All layout uses ONLY inline styles — zero Tailwind for layout.
+   No Framer Motion on the modal container (no transform).
+   Sidebar height is pinned via position:absolute top:0 bottom:0.
+   ====================================================================== */
+function ScreenshotModal({
+  project,
+  activeIndex,
+  onChangeIndex,
+  onClose,
+}: {
+  project: VibeProject;
+  activeIndex: number;
+  onChangeIndex: (i: number | ((prev: number | null) => number | null)) => void;
+  onClose: () => void;
+}) {
+  const prev = () =>
+    onChangeIndex((p) => (p !== null && p > 0 ? p - 1 : project.screenshots.length - 1));
+  const next = () =>
+    onChangeIndex((p) => (p !== null && p < project.screenshots.length - 1 ? p + 1 : 0));
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 50,
+        background: "rgba(0,0,0,0.92)",
+        cursor: "zoom-out",
+      }}
+    >
+      {/* Modal box — centered via margin auto + absolute inset */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: "absolute",
+          top: "12.5vh",
+          bottom: "12.5vh",
+          left: "2rem",
+          right: "2rem",
+          maxWidth: "64rem",
+          margin: "0 auto",
+          cursor: "default",
+          /* no transform, no flex, no grid — just a positioned container */
+        }}
+      >
+        {/* ---- MAIN IMAGE VIEWER ---- */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            /* leave 284px on the right for sidebar (280 + 4px border) */
+            right: 284,
+            bottom: 0,
+            overflow: "hidden",
+            background: "var(--muted)",
+            border: "4px solid var(--foreground)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.5rem",
+          }}
+        >
+          {/* Prev */}
+          <button
+            onClick={(e) => { e.stopPropagation(); prev(); }}
+            style={{ position: "absolute", left: 16, zIndex: 30 }}
+            className="bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
+          >
+            <ChevronLeft className="h-6 w-6 stroke-[3]" />
+          </button>
+
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <Image
+              src={project.screenshots[activeIndex]}
+              alt={`screenshot ${activeIndex + 1}`}
+              fill
+              className="object-contain"
+              sizes="70vw"
+              priority
+            />
+          </div>
+
+          {/* Next */}
+          <button
+            onClick={(e) => { e.stopPropagation(); next(); }}
+            style={{ position: "absolute", right: 16, zIndex: 30 }}
+            className="bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
+          >
+            <ChevronRight className="h-6 w-6 stroke-[3]" />
+          </button>
+
+          {/* Counter */}
+          <div
+            style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)" }}
+            className="bg-background border-2 border-foreground px-3 py-1 font-mono text-xs font-bold shadow-brutal-sm"
+          >
+            {activeIndex + 1} / {project.screenshots.length}
+          </div>
+        </div>
+
+        {/* ---- SIDEBAR (scrollable thumbnails) ----
+             position:absolute with top:0 + bottom:0 gives it
+             a DEFINITE pixel height = (75vh).
+             overflow-y:auto then GUARANTEES scrolling works.
+             No flex, no grid, no transform — impossible to break. */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: 280,
+            overflowY: "auto",
+            overflowX: "hidden",
+            background: "var(--background)",
+            border: "4px solid var(--foreground)",
+            borderLeft: "none", /* shared border with viewer */
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 10,
+              borderBottom: "4px solid var(--foreground)",
+              padding: "0.75rem",
+              background: "var(--muted)",
+            }}
+            className="font-black text-xs uppercase tracking-wider text-muted-foreground"
+          >
+            SCREENSHOTS ({project.screenshots.length})
+          </div>
+
+          {/* Thumbnail list */}
+          <div style={{ padding: "0.75rem" }}>
+            {project.screenshots.map((src, i) => {
+              const isActive = i === activeIndex;
+              return (
+                <div key={i} style={{ marginBottom: i < project.screenshots.length - 1 ? 12 : 0 }}>
+                  <button
+                    onClick={() => onChangeIndex(i)}
+                    style={{
+                      position: "relative",
+                      display: "block",
+                      width: project.platform === "web" ? "100%" : 140,
+                      aspectRatio: project.platform === "web" ? "16/9" : "9/16",
+                      margin: project.platform === "web" ? undefined : "0 auto",
+                      border: isActive ? "2px solid var(--brutal-accent)" : "2px solid var(--foreground)",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      opacity: isActive ? 0.85 : 1,
+                      outline: isActive ? "2px solid var(--brutal-accent)" : "none",
+                      outlineOffset: 2,
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    <Image src={src} alt={`thumb ${i + 1}`} fill className="object-cover" sizes="140px" />
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: isActive ? "rgba(255,0,0,0.1)" : "transparent",
+                      }}
+                    >
+                      <span
+                        className="font-mono text-xs font-black"
+                        style={{
+                          padding: "2px 6px",
+                          border: "1px solid var(--foreground)",
+                          background: isActive ? "var(--brutal-accent)" : "var(--background)",
+                          color: isActive ? "var(--background)" : "var(--foreground)",
+                          boxShadow: "2px 2px 0 0 var(--foreground)",
+                        }}
+                      >
+                        #{i + 1}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: -16,
+            right: -16,
+            zIndex: 60,
+            padding: 8,
+            border: "4px solid var(--foreground)",
+            background: "var(--brutal-accent)",
+            color: "var(--background)",
+            cursor: "pointer",
+            boxShadow: "2px 2px 0 0 var(--foreground)",
+          }}
+        >
+          <X className="h-5 w-5 stroke-[3]" />
+        </button>
+      </div>
+    </div>
   );
 }
