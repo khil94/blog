@@ -20,7 +20,7 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <Link href={`/blog/${category}/${slug}`}>
-      <Card className="h-full transition-colors hover:bg-muted/50 overflow-hidden">
+      <Card className="h-full hover:bg-muted/50 hover:scale-105 hover:rotate-1 overflow-hidden transition-all duration-300">
         {thumbnail && (
           <div className="relative aspect-video w-full">
             <Image src={thumbnail} alt={title} fill className="object-cover" />
