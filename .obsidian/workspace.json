@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/browser/audio 태그와 자동 재생.mdx",
+                "file": "posts/css/whenStickyDoesntWork.mdx",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "audio 태그와 자동 재생"
+              "title": "whenStickyDoesntWork"
             }
           }
         ]
@@ -185,6 +185,9 @@
   },
   "active": "6271752be333c9f0",
   "lastOpenFiles": [
+    "posts/browser/Audio tag and autoplay.mdx",
+    "posts/browser/AudioTagAndautoplay.mdx",
+    "posts/css/whenStickyDoesntWork.mdx",
     "public/thumbnails/tailwindCSS.svg",
     "public/thumbnails/til.svg",
     "public/thumbnails/zustand.svg",
@@ -195,8 +198,6 @@
     "public/thumbnails/bugs.svg",
     "public/thumbnails/amplify.svg",
     "public/thumbnails/react.svg",
-    "public/images/20231230065929.png",
-    "posts/browser/audio 태그와 자동 재생.mdx",
     "posts/etc/tailwind4Custom.mdx",
     "posts/browser",
     "posts/etc/quickZustand.mdx",
@@ -204,7 +205,6 @@
     "posts/TIL/TIL-legacy-peer-deps.mdx",
     "posts/log/TailwindCSSContentError.mdx",
     "posts/log/nextParseURLError.mdx",
-    "posts/log/min-widthAndFlex.mdx",
-    "posts/log/blogError1.mdx"
+    "posts/log/min-widthAndFlex.mdx"
   ]
 }
