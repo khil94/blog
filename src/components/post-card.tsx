@@ -20,7 +20,7 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <Link href={`/blog/${category}/${slug}`}>
-      <Card className="h-full border-foreground hover:ring-4 hover:scale-105 hover:ring-foreground overflow-hidden transition-transform duration-300">
+      <Card className="h-full group shadow-brutal-lg border-foreground hover:bg-foreground hover:text-background hover:shadow-none hover:translate-x-2 hover:translate-y-2 overflow-hidden transition-all duration-150">
         {thumbnail && (
           <div className="relative aspect-video w-full">
             <Image src={thumbnail} alt={title} fill className="object-cover" />
@@ -29,17 +29,23 @@ export function PostCard({ post }: PostCardProps) {
         <CardHeader>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <Badge variant="secondary">{category}</Badge>
-            <time dateTime={createdAt}>{createdAt}</time>
+            <time className="group-hover:text-background" dateTime={createdAt}>
+              {createdAt}
+            </time>
           </div>
           <CardTitle className="line-clamp-2">{title}</CardTitle>
-          <CardDescription className="line-clamp-2">
+          <CardDescription className="line-clamp-2 group-hover:text-background">
             {description}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <Badge key={tag} variant="outline">
+              <Badge
+                key={tag}
+                variant="outline"
+                className="group-hover:text-background group-hover:border-background"
+              >
                 {tag}
               </Badge>
             ))}
