@@ -456,7 +456,7 @@ function ScreenshotModal({
         onClick={(e) => e.stopPropagation()}
         className="absolute top-[12.5vh] bottom-[12.5vh] left-8 right-8 max-w-5xl my-0 mx-auto cursor-default"
       >
-        <div className="absolute top-0 left-0 right-71 bottom-0 flex items-center justify-center p-6 overflow-hidden bg-muted border-4 border-foreground">
+        <div className="absolute top-0 left-0 right-71 bottom-0 flex items-center justify-center p-6 overflow-hidden bg-background/50 border-4 border-foreground">
           {/* Prev */}
           <button
             onClick={(e) => {
@@ -498,7 +498,7 @@ function ScreenshotModal({
 
         <div
           data-lenis-prevent
-          className="absolute top-0 right-0 bottom-0 w-70 overflow-y-auto overflow-x-hidden bg-background border-4 border-foreground border-l-0"
+          className="absolute top-0 right-0 bottom-0 w-70 overflow-y-auto overflow-x-hidden bg-background/50 border-4 border-foreground border-l-0"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 border-b-4 border-foreground p-3 bg-muted font-black text-xs uppercase tracking-wider text-muted-foreground">
