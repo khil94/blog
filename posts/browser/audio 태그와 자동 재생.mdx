@@ -62,11 +62,91 @@ MDN 문서를 보면 그 이유가 명확히 적혀 있다.
 
 해결의 핵심은 재생 권한 획득 타이밍이다. 임의의 타이밍(로드 직후, useEffect 등)에 강제로 재생하는 대신, 사용자가 화면의 무언가를 '클릭'하는 순간의 흐름 속에서 play()를 호출해야 한다.
 
+1. 기본 HTML/JS에서의 해결책
+가장 단순하고 확실한 방법은, 페이지 내에 "시작" 버튼을 두고 그 버튼의 클릭 이벤트 리스너 안에서 play()를 호출하는 것이다.
 
 
-필요에 따라 소제목을 추가해서 사용하도록.
+```HTML
+<audio id="myAudio" src="listen.mp3"></audio>
+<button id="startBtn">듣기 평가 시작하기</button>
 
-## 결론
+<script>
+  const audio = document.getElementById("myAudio");
+  const btn = document.getElementById("startBtn");
+
+  //  사용자의 '클릭' 이벤트 흐름 안에서 직접 play() 호출 (권한 획득)
+  btn.addEventListener("click", () => {
+    audio.play().catch(error => {
+      console.warn('재생 실패:', error);
+    });
+  });
+</script>
+```
+
+2. React에서의 해결책 (권한 위임하기)
+
+React 환경에서도 마찬가지로 Ref를 이용하여 사용자 상호작용과 재생을 연결하면 된다. 이를테면 시험 시작 버튼을 누름과 동시에 재생시키는 방법이 있겠다.
+
+```TypeScript
+'use client';
+
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+
+export interface AudioPlayerHandler {
+  play: () => Promise<void> | undefined;
+  pause: () => void;
+}
+
+const MockExamAudioPlayer = forwardRef<AudioPlayerHandler, Props>(
+  ({ questions, isExamStarted }, ref) => {
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [currentIdx, setCurrentIdx] = useState<number>(0);
+
+    // 부모 컴포넌트에서 사용자 클릭 시 직접 호출할 수 있도록 메서드 노출
+    useImperativeHandle(ref, () => ({
+      play: () => audioRef.current?.play(),
+      pause: () => audioRef.current?.pause(),
+    }));
+
+    // ... 
+
+    return (
+      <audio
+        ref={audioRef}
+        src={questions[currentIdx].audio}
+        onEnded={() => handleNextAudio()}
+      />
+    );
+  },
+);
+
+export default MockExamAudioPlayer;
+```
+
+위와 같이 실행과 관련된 함수를 외부로 노출시키고 부모 컴포넌트에서 **사용자의 클릭 이벤트**와 직접 연결해주면 된다.
+
+```typescript
+function ExamPage() {
+  const playerRef = useRef<AudioPlayerHandler>(null);
+
+  const handleStartExam = () => {
+    startExamLogic(); // 시험 시작 상태 변경 등
+    // 💡 사용자의 '클릭' 이벤트 흐름 안에서 직접 play() 호출! 
+    playerRef.current?.play(); 
+  };
+
+  return (
+    <div>
+      <button onClick={handleStartExam}>시험 시작하기</button>
+      <MockExamAudioPlayer ref={playerRef} questions={questions} isExamStarted={isStarted} />
+    </div>
+  );
+}
+```
+
+이렇게 처리하면 브라우저는 오디오 재생 요청이 사용자의 자발적인 상호작용에서 비롯되었다고 판단하여 차단하지 않는다. 또 한 번 재생 권한을 획득하고 나면, 이후 오디오가 끝나고(onEnded) 다음 트랙으로 넘어가며 재생되는 동작은 제약 없이 매끄럽게 이루어진다.
+
+## 주의점
 
 글을 마무리하는 내용을 여기에 작성하면 되겠군.
 
