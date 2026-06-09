@@ -5,7 +5,7 @@ tags:
   - HTML
 createdAt: 2026-05-09
 thumbnail: /thumbnails/default.svg
-draft: true
+draft: false
 ---
 
 ## 서론
@@ -62,7 +62,7 @@ MDN 문서를 보면 그 이유가 명확히 적혀 있다.
 
 해결의 핵심은 재생 권한 획득 타이밍이다. 임의의 타이밍(로드 직후, useEffect 등)에 강제로 재생하는 대신, 사용자가 화면의 무언가를 '클릭'하는 순간의 흐름 속에서 play()를 호출해야 한다.
 
-1. 기본 HTML/JS에서의 해결책
+### 1. 기본 HTML/JS에서의 해결책
 가장 단순하고 확실한 방법은, 페이지 내에 "시작" 버튼을 두고 그 버튼의 클릭 이벤트 리스너 안에서 play()를 호출하는 것이다.
 
 
@@ -83,7 +83,7 @@ MDN 문서를 보면 그 이유가 명확히 적혀 있다.
 </script>
 ```
 
-2. React에서의 해결책 (권한 위임하기)
+### 2. React에서의 해결책 (권한 위임하기)
 
 React 환경에서도 마찬가지로 Ref를 이용하여 사용자 상호작용과 재생을 연결하면 된다. 이를테면 시험 시작 버튼을 누름과 동시에 재생시키는 방법이 있겠다.
 
@@ -148,8 +148,11 @@ function ExamPage() {
 
 ## 주의점
 
-글을 마무리하는 내용을 여기에 작성하면 되겠군.
+- **Promise 예외 처리 필수**: `<audio>` 태그의 play() 메서드는 Promise를 반환한다. 만약 스크립트에 의한 재생(play() 호출)이 브라우저 정책에 의해 차단되거나 소스 로딩에 실패하면 Promise가 즉시 NotAllowedError로 Reject 된다. 따라서 반드시 .catch()를 달아주어야 Uncaught (in promise) 에러를 방지할 수 있다.
+- **UX 설계 고려사항** : 어떠한 기술적인 방법을 쓰더라도 사용자가 페이지와 상호작용하지 않은 상태에서 소리를 트는 것은 모던 브라우저 환경에서 사실상 불가능하다. 기획 단계부터 "오디오 재생", "시험 시작" 같은 명확한 사용자 액션을 유도하는 UI 흐름을 설계하는 것이 가장 중요하다.
 
-## 참고 자료
+## 참고자료
 
-참고한 자료가 있다면 링크를 남겨두는 것이 좋겠지.
+- [MDN Web Docs - Autoplay guide for media and Web Audio APIs](https://developer.mozilla.org/ko/docs/Web/Media/Guides/Autoplay)
+- [Chrome Developers - Autoplay policy in Chrome](https://developer.chrome.com/blog/autoplay?hl=ko)
+
