@@ -450,63 +450,25 @@ function ScreenshotModal({
   return (
     <div
       onClick={onClose}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 50,
-        background: "rgba(0,0,0,0.92)",
-        cursor: "zoom-out",
-      }}
+      className="fixed top-0 left-0 right-0 bottom-0 z-50 backdrop-blur-md bg-transparent cursor-zoom-out"
     >
-      {/* Modal box — centered via margin auto + absolute inset */}
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          position: "absolute",
-          top: "12.5vh",
-          bottom: "12.5vh",
-          left: "2rem",
-          right: "2rem",
-          maxWidth: "64rem",
-          margin: "0 auto",
-          cursor: "default",
-          /* no transform, no flex, no grid — just a positioned container */
-        }}
+        className="absolute top-[12.5vh] bottom-[12.5vh] left-8 right-8 max-w-5xl my-0 mx-auto cursor-default"
       >
-        {/* ---- MAIN IMAGE VIEWER ---- */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            /* leave 284px on the right for sidebar (280 + 4px border) */
-            right: 284,
-            bottom: 0,
-            overflow: "hidden",
-            background: "var(--muted)",
-            border: "4px solid var(--foreground)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1.5rem",
-          }}
-        >
+        <div className="absolute top-0 left-0 right-71 bottom-0 flex items-center justify-center p-6 overflow-hidden bg-muted border-4 border-foreground">
           {/* Prev */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               prev();
             }}
-            style={{ position: "absolute", left: 16, zIndex: 30 }}
-            className="bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
+            className="absolute z-30 left-4 bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
           >
-            <ChevronLeft className="h-6 w-6 stroke-[3]" />
+            <ChevronLeft className="h-6 w-6 stroke-3" />
           </button>
 
-          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+          <div className="relative w-full h-full">
             <Image
               src={project.screenshots[activeIndex]}
               alt={`screenshot ${activeIndex + 1}`}
@@ -523,40 +485,20 @@ function ScreenshotModal({
               e.stopPropagation();
               next();
             }}
-            style={{ position: "absolute", right: 16, zIndex: 30 }}
-            className="bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
+            className="absolute z-30 right-4 bg-background hover:bg-muted text-foreground p-2 border-3 border-foreground shadow-brutal-sm cursor-pointer"
           >
-            <ChevronRight className="h-6 w-6 stroke-[3]" />
+            <ChevronRight className="h-6 w-6 stroke-3" />
           </button>
 
           {/* Counter */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 16,
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-            className="bg-background border-2 border-foreground px-3 py-1 font-mono text-xs font-bold shadow-brutal-sm"
-          >
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background border-2 border-foreground px-3 py-1 font-mono text-xs font-bold shadow-brutal-sm">
             {activeIndex + 1} / {project.screenshots.length}
           </div>
         </div>
 
         <div
           data-lenis-prevent
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: 280,
-            overflowY: "auto",
-            overflowX: "hidden",
-            background: "var(--background)",
-            border: "4px solid var(--foreground)",
-            borderLeft: "none" /* shared border with viewer */,
-          }}
+          className="absolute top-0 right-0 bottom-0 w-70 overflow-y-auto overflow-x-hidden bg-background border-4 border-foreground border-l-0"
         >
           {/* Header */}
           <div
