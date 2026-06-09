@@ -185,6 +185,12 @@
   },
   "active": "6271752be333c9f0",
   "lastOpenFiles": [
+    "node_modules/unist-util-visit/lib/index.d.ts.map",
+    "node_modules/unist-util-visit-parents/lib/color.node.d.ts",
+    "node_modules/unist-util-visit-parents/lib/index.d.ts.map",
+    "node_modules/unist-util-visit-parents/lib/color.node.d.ts.map",
+    "node_modules/unist-util-visit-parents/lib/color.d.ts.map",
+    "node_modules/unist-util-visit-parents/lib/color.node.js",
     "posts/browser/Audio tag and autoplay.mdx",
     "posts/browser/AudioTagAndautoplay.mdx",
     "posts/css/whenStickyDoesntWork.mdx",
@@ -199,12 +205,6 @@
     "public/thumbnails/amplify.svg",
     "public/thumbnails/react.svg",
     "posts/etc/tailwind4Custom.mdx",
-    "posts/browser",
-    "posts/etc/quickZustand.mdx",
-    "posts/typescript/CouldNotFindModule.mdx",
-    "posts/TIL/TIL-legacy-peer-deps.mdx",
-    "posts/log/TailwindCSSContentError.mdx",
-    "posts/log/nextParseURLError.mdx",
-    "posts/log/min-widthAndFlex.mdx"
+    "posts/browser"
   ]
 }
