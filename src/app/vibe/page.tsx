@@ -544,6 +544,7 @@ function ScreenshotModal({
         </div>
 
         <div
+          data-lenis-prevent
           style={{
             position: "absolute",
             top: 0,

@@ -1,4 +1,5 @@
 import { Header } from "@/components/header";
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 export const metadata = {
   title: "Vibe Coding Exhibition",
@@ -12,6 +13,7 @@ export default function VibeLayout({
 }) {
   return (
     <>
+      <SmoothScroll />
       <Header variant="vibe" />
       {children}
     </>
