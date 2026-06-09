@@ -123,7 +123,7 @@ export const VIBE_PROJECTS: VibeProject[] = [
     createdAt: "2026-02",
     featured: false,
     exhibitNumber: 1,
-    platform: "web",
+    platform: "android",
   },
 ];
 
