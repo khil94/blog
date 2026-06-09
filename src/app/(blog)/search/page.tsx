@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-import { searchPosts } from "@/lib/posts";
 import { PostList } from "@/components/post-list";
-import { SearchInput } from "@/components/search-input";
+import { searchPosts } from "@/lib/posts";
 
 export const metadata = {
   title: "Search - Blog",
@@ -21,11 +19,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <div className="container mx-auto px-4 py-8">
       <header className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Search</h1>
-        <div className="max-w-md">
+        {/* <div className="max-w-md">
           <Suspense fallback={<div>Loading...</div>}>
             <SearchInput />
           </Suspense>
-        </div>
+        </div> */}
       </header>
       <main>
         {query ? (

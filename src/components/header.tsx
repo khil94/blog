@@ -6,10 +6,9 @@ import {
   SITE_CONFIG,
   VIBE_NAV_ITEMS,
 } from "@/constants";
-import { Search } from "lucide-react";
 import Link from "next/link";
+import SearchButton from "./search-button";
 import { ThemeToggle } from "./theme-toggle";
-import { Button } from "./ui/button";
 
 interface HeaderProps {
   variant?: "landing" | "blog" | "vibe";
@@ -44,14 +43,7 @@ export function Header({ variant = "landing" }: HeaderProps) {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          {showSearch && (
-            <Link href="/search">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </Link>
-          )}
+          {showSearch && <SearchButton />}
           <ThemeToggle />
         </div>
       </div>
