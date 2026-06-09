@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/typescript/UnknownVersusAny.mdx",
+                "file": "posts/browser/audio 태그와 자동 재생.mdx",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UnknownVersusAny"
+              "title": "audio 태그와 자동 재생"
             }
           }
         ]
@@ -185,16 +185,26 @@
   },
   "active": "6271752be333c9f0",
   "lastOpenFiles": [
-    "posts/typescript/Enum.mdx",
-    "posts/typescript/UnknownVersusAny.mdx",
-    "posts/typescript/CouldNotFindModule.mdx",
-    "posts/TIL/TIL-IsomorphicHooks.mdx",
-    "posts/css/whenStickyDoesntWork.mdx",
-    "posts/etc/quickZustand.mdx",
+    "public/thumbnails/tailwindCSS.svg",
+    "public/thumbnails/til.svg",
+    "public/thumbnails/zustand.svg",
+    "public/thumbnails/typescript.svg",
+    "public/thumbnails/javascript.svg",
+    "public/thumbnails/enum.svg",
+    "public/thumbnails/default.svg",
+    "public/thumbnails/bugs.svg",
+    "public/thumbnails/amplify.svg",
+    "public/thumbnails/react.svg",
+    "public/images/20231230065929.png",
+    "posts/browser/audio 태그와 자동 재생.mdx",
     "posts/etc/tailwind4Custom.mdx",
-    "posts/javascript/Number.mdx",
-    "posts/javascript/NoteForDateToISOString.mdx",
-    "posts/javascript/EsmAndCommonJS.mdx",
-    "posts/log/TailwindCSSContentError.mdx"
+    "posts/browser",
+    "posts/etc/quickZustand.mdx",
+    "posts/typescript/CouldNotFindModule.mdx",
+    "posts/TIL/TIL-legacy-peer-deps.mdx",
+    "posts/log/TailwindCSSContentError.mdx",
+    "posts/log/nextParseURLError.mdx",
+    "posts/log/min-widthAndFlex.mdx",
+    "posts/log/blogError1.mdx"
   ]
 }
