@@ -501,22 +501,12 @@ function ScreenshotModal({
           className="absolute top-0 right-0 bottom-0 w-70 overflow-y-auto overflow-x-hidden bg-background border-4 border-foreground border-l-0"
         >
           {/* Header */}
-          <div
-            style={{
-              position: "sticky",
-              top: 0,
-              zIndex: 10,
-              borderBottom: "4px solid var(--foreground)",
-              padding: "0.75rem",
-              background: "var(--muted)",
-            }}
-            className="font-black text-xs uppercase tracking-wider text-muted-foreground"
-          >
+          <div className="sticky top-0 z-10 border-b-4 border-foreground p-3 bg-muted font-black text-xs uppercase tracking-wider text-muted-foreground">
             SCREENSHOTS ({project.screenshots.length})
           </div>
 
           {/* Thumbnail list */}
-          <div style={{ padding: "0.75rem" }}>
+          <div className="p-3">
             {project.screenshots.map((src, i) => {
               const isActive = i === activeIndex;
               return (
@@ -528,23 +518,18 @@ function ScreenshotModal({
                 >
                   <button
                     onClick={() => onChangeIndex(i)}
+                    className="relative block cursor-pointer overflow-hidden outline-offset-2 transition-all duration-150"
                     style={{
-                      position: "relative",
-                      display: "block",
                       width: project.platform === "web" ? "100%" : 140,
                       aspectRatio: project.platform === "web" ? "16/9" : "9/16",
                       margin: project.platform === "web" ? undefined : "0 auto",
                       border: isActive
                         ? "2px solid var(--brutal-accent)"
                         : "2px solid var(--foreground)",
-                      cursor: "pointer",
-                      overflow: "hidden",
                       opacity: isActive ? 0.85 : 1,
                       outline: isActive
                         ? "2px solid var(--brutal-accent)"
                         : "none",
-                      outlineOffset: 2,
-                      transition: "all 0.15s",
                     }}
                   >
                     <Image
@@ -555,22 +540,13 @@ function ScreenshotModal({
                       sizes="140px"
                     />
                     <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: isActive
-                          ? "rgba(255,0,0,0.1)"
-                          : "transparent",
-                      }}
+                      className={`absolute inset-0 flex items-center justify-center
+                        ${isActive ? " bg-accent/10" : "bg-transparent"}
+                        `}
                     >
                       <span
-                        className="font-mono text-xs font-black"
+                        className="py-0.5 px-1.5 border border-foreground font-mono text-xs font-black"
                         style={{
-                          padding: "2px 6px",
-                          border: "1px solid var(--foreground)",
                           background: isActive
                             ? "var(--brutal-accent)"
                             : "var(--background)",
@@ -593,20 +569,9 @@ function ScreenshotModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: -16,
-            right: -16,
-            zIndex: 60,
-            padding: 8,
-            border: "4px solid var(--foreground)",
-            background: "var(--brutal-accent)",
-            color: "var(--background)",
-            cursor: "pointer",
-            boxShadow: "2px 2px 0 0 var(--foreground)",
-          }}
+          className="absolute -top-4 -right-4 z-60 p-2 border-4 border-foreground bg-brutal-accent text-background cursor-pointer shadow-2xl shadow-foreground"
         >
-          <X className="h-5 w-5 stroke-[3]" />
+          <X className="h-5 w-5 stroke-3" />
         </button>
       </div>
     </div>
