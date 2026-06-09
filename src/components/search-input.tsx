@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function SearchInput() {
   const router = useRouter();
@@ -12,7 +12,7 @@ export function SearchInput() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (query) {
-        router.push(`/blog/search?q=${encodeURIComponent(query)}`);
+        router.push(`/search?q=${encodeURIComponent(query)}`);
       }
     }, 300);
 

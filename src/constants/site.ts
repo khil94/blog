@@ -2,7 +2,7 @@ export const SITE_CONFIG = {
   name: "Hyoil.blog",
   title: "Hyoil | Frontend Developer",
   description:
-    "인터랙티브 웹과 AI 통합에 관심이 많은 프론트엔드 개발자 김효일의 포트폴리오입니다.",
+    "인터랙티브 웹과 AI 통합에 관심이 많은 프론트엔드 개발자 김효일의 블로그입니다.",
   url: "https://www.hyoil.blog",
   locale: "ko-KR",
   themeColor: {
@@ -12,21 +12,19 @@ export const SITE_CONFIG = {
 } as const;
 
 export const NAV_ITEMS = [
-  { label: "About", href: "/#about" },
-  { label: "Projects", href: "/#projects" },
+  { label: "About", href: "/portfolio/#about" },
+  { label: "Projects", href: "/portfolio/#projects" },
   { label: "Vibe", href: "/vibe" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/portfolio/#contact" },
 ] as const;
 
 export const BLOG_NAV_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "Blog", href: "/blog" },
-  { label: "Tags", href: "/blog/tags" },
+  { label: "Tags", href: "/tags" },
+  { label: "Vibe", href: "/vibe" },
+  { label: "Portfolio", href: "/portfolio" },
 ] as const;
 
 export const VIBE_NAV_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "Exhibition", href: "/vibe" },
-  { label: "Blog", href: "/blog" },
+  { label: "Vibe", href: "/vibe" },
+  { label: "Portfolio", href: "/portfolio" },
 ] as const;

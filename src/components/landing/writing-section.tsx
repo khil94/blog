@@ -33,7 +33,7 @@ export function WritingSection({ posts }: WritingSectionProps) {
         >
           <h2 className="text-4xl md:text-5xl font-bold">Writing</h2>
           <Link
-            href="/blog"
+            href="/"
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             View all
@@ -51,7 +51,7 @@ export function WritingSection({ posts }: WritingSectionProps) {
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               <Link
-                href={`/blog/${post.category}/${post.slug}`}
+                href={`/${post.category}/${post.slug}`}
                 className="group block p-6 rounded-xl bg-card/50 border border-border hover:border-foreground/20 hover:bg-card transition-all"
               >
                 <div className="flex items-start justify-between gap-4">

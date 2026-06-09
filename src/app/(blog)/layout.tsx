@@ -1,10 +1,7 @@
 import { Header } from "@/components/header";
+import { ReactNode } from "react";
 
-export default function BlogLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header variant="blog" />

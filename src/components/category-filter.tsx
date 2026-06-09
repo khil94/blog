@@ -15,12 +15,12 @@ export function CategoryFilter({
   totalCount,
 }: CategoryFilterProps) {
   const pathname = usePathname();
-  const isAllActive = pathname === "/blog";
+  const isAllActive = pathname === "/";
 
   return (
     <div className="flex flex-wrap gap-2 mb-8">
       <Link
-        href="/blog"
+        href="/"
         className={`px-4 py-2 border-3 border-foreground font-bold uppercase text-sm transition-all ${
           isAllActive
             ? "bg-foreground text-background"
@@ -30,11 +30,11 @@ export function CategoryFilter({
         All ({totalCount})
       </Link>
       {categories.map((category) => {
-        const isActive = pathname === `/blog/${category}`;
+        const isActive = pathname === `/${category}`;
         return (
           <Link
             key={category}
-            href={`/blog/${category}`}
+            href={`/${category}`}
             className={`px-4 py-2 border-3 border-foreground font-bold uppercase text-sm transition-all ${
               isActive
                 ? "bg-foreground text-background"

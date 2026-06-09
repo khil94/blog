@@ -62,7 +62,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <header className="mb-8">
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-2">
-              <Link href={`/blog/${category}`} className="hover:underline">
+              <Link href={`/${category}`} className="hover:underline">
                 <Badge variant="secondary">{category}</Badge>
               </Link>
             </div>
@@ -78,7 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="text-xl text-muted-foreground mb-4">{description}</p>
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <Link key={tag} href={`/blog/tags/${encodeURIComponent(tag)}`}>
+              <Link key={tag} href={`/tags/${encodeURIComponent(tag)}`}>
                 <Badge variant="outline">{tag}</Badge>
               </Link>
             ))}
@@ -89,7 +89,7 @@ export default async function PostPage({ params }: PostPageProps) {
           {content}
         </div>
         <div className="text-right">
-          <Link href={"/blog"}>
+          <Link href={"/"}>
             <Button>목록으로</Button>
           </Link>
         </div>

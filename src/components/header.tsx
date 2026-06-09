@@ -1,10 +1,15 @@
 "use client";
 
+import {
+  BLOG_NAV_ITEMS,
+  NAV_ITEMS,
+  SITE_CONFIG,
+  VIBE_NAV_ITEMS,
+} from "@/constants";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
-import { NAV_ITEMS, BLOG_NAV_ITEMS, VIBE_NAV_ITEMS, SITE_CONFIG } from "@/constants";
 
 interface HeaderProps {
   variant?: "landing" | "blog" | "vibe";
@@ -15,8 +20,8 @@ export function Header({ variant = "landing" }: HeaderProps) {
     variant === "blog"
       ? BLOG_NAV_ITEMS
       : variant === "vibe"
-        ? VIBE_NAV_ITEMS
-        : NAV_ITEMS;
+      ? VIBE_NAV_ITEMS
+      : NAV_ITEMS;
   const showSearch = variant === "blog";
 
   return (
@@ -40,7 +45,7 @@ export function Header({ variant = "landing" }: HeaderProps) {
         </div>
         <div className="flex items-center gap-2">
           {showSearch && (
-            <Link href="/blog/search">
+            <Link href="/search">
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>

@@ -19,7 +19,7 @@ export function PostCard({ post }: PostCardProps) {
   const { title, description, tags, createdAt, thumbnail } = frontmatter;
 
   return (
-    <Link href={`/blog/${category}/${slug}`}>
+    <Link href={`/${category}/${slug}`}>
       <Card className="h-full group shadow-brutal-lg border-foreground hover:bg-foreground hover:text-background hover:shadow-none hover:translate-x-2 hover:translate-y-2 overflow-hidden transition-all duration-150">
         {thumbnail && (
           <div className="relative aspect-video w-full">

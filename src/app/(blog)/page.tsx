@@ -26,28 +26,34 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const paginatedPosts = allPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const paginatedPosts = allPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE
+  );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Blog</h1>
-        <p className="text-lg text-muted-foreground">
-          개발 관련 글을 기록합니다.
-        </p>
-      </header>
-      <CategoryFilter
-        categories={categories}
-        postCounts={postCounts}
-        totalCount={allPosts.length}
-      />
-      <main>
-        <PostList
-          posts={paginatedPosts}
-          currentPage={currentPage}
-          totalPages={totalPages}
+    <>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold tracking-tight mb-4">Blog</h1>
+          <p className="text-lg text-muted-foreground">
+            개발 관련 글을 기록합니다.
+          </p>
+        </div>
+
+        <CategoryFilter
+          categories={categories}
+          postCounts={postCounts}
+          totalCount={allPosts.length}
         />
-      </main>
-    </div>
+        <main>
+          <PostList
+            posts={paginatedPosts}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+        </main>
+      </div>
+    </>
   );
 }
